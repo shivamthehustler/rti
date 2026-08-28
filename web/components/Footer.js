@@ -2,11 +2,17 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function Footer() {
   const { t } = useApp();
+  const pathname = usePathname();
+
+  if (pathname?.startsWith('/dashboard')) {
+    return null;
+  }
 
   return (
     <footer className="font-sans text-slate-300">

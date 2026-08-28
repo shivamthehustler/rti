@@ -35,6 +35,10 @@ export default function Header() {
     { key: 'contact', label: t.header.nav.contact, href: '/contact' },
   ];
 
+  if (pathname?.startsWith('/dashboard')) {
+    return null;
+  }
+
   return (
     <header className="w-full bg-white border-b border-gray-200/80 sticky top-0 z-50 shadow-2xs">
       {/* Top Government Strip */}
@@ -95,7 +99,7 @@ export default function Header() {
       {/* Main Header Bar - Content Shifted Slightly Downward */}
       <div className="px-3 sm:px-6 md:px-12 max-w-[1536px] mx-auto flex items-stretch justify-between gap-2 sm:gap-6 min-h-[58px] sm:min-h-[72px] relative">
         {/* Logo and Title - Vertically Centered */}
-        <Link href="/" className="flex items-center gap-2 sm:gap-3.5 group shrink min-w-0 py-2.5 sm:py-3.5">
+        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 sm:gap-3.5 group shrink min-w-0 py-2.5 sm:py-3.5">
           <Image 
             src="/logo.png" 
             alt="State Emblem of India" 
@@ -246,10 +250,15 @@ export default function Header() {
           <div className="hidden lg:block pl-3 border-l border-gray-200 my-auto">
             {user ? (
               <div className="flex items-center gap-2">
-                <span className="flex items-center gap-1.5 bg-blue-50 text-[#2563EB] border border-blue-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-2xs">
+                <Link
+                  href="/dashboard/flash-rti"
+                  className="flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-[#2563EB] border border-blue-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-2xs transition-colors cursor-pointer"
+                  title="Open Citizen Dashboard"
+                >
                   <UserIcon className="w-3.5 h-3.5 text-[#2563EB]" />
                   <span className="max-w-[120px] truncate">{user.name || user.username}</span>
-                </span>
+                  <span className="text-[10px] bg-[#2563EB] text-white px-1.5 py-0.2 rounded font-medium ml-0.5">Dashboard</span>
+                </Link>
                 <button
                   type="button"
                   onClick={logoutUser}

@@ -21,7 +21,7 @@ function LoginFormContent() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTarget = searchParams.get('redirect') || '/submit-request';
+  const redirectTarget = searchParams.get('redirect') || '/dashboard/flash-rti';
   const { loginUser } = useAppStore();
 
   // Form states - pre-filled by default for instant login
@@ -59,8 +59,12 @@ function LoginFormContent() {
     // Login successful
     const userObj = {
       username: email.trim().split('@')[0] || 'citizen.rti',
-      name: email.trim() === 'citizen.rti@gov.in' ? 'Shivam Kumar' : email.trim().split('@')[0],
-      email: email.trim()
+      name: email.trim() === 'citizen.rti@gov.in' ? 'Shivam Gupta' : email.trim().split('@')[0],
+      email: email.trim(),
+      role: 'Citizen Applicant',
+      state: 'Maharashtra',
+      digilockerVerified: true,
+      aadhaarMasked: 'XXXX-XXXX-8921'
     };
     loginUser(userObj);
     setLoggedInUser(userObj.name);
@@ -69,7 +73,7 @@ function LoginFormContent() {
     // Auto redirect after short delay
     setTimeout(() => {
       router.push(redirectTarget);
-    }, 1200);
+    }, 1000);
   };
 
   return (

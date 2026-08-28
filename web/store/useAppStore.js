@@ -27,19 +27,35 @@ export const useAppStore = create((set, get) => ({
     set({ user: null });
     if (typeof window !== 'undefined') {
       try {
-        localStorage.removeItem('rti_portal_user');
+        localStorage.setItem('rti_portal_user', 'logged_out');
       } catch (e) {}
     }
   },
 
   initUser: () => {
-    if (typeof window !== 'undefined' && !get().user) {
+    if (typeof window !== 'undefined') {
       try {
         const savedUser = localStorage.getItem('rti_portal_user');
+        if (savedUser === 'logged_out' || savedUser === 'null') {
+          set({ user: null });
+          return;
+        }
         if (savedUser) {
           set({ user: JSON.parse(savedUser) });
+          return;
         }
       } catch (e) {}
+      // Fallback default citizen user
+      const defaultCitizen = {
+        username: 'shivam.gupta',
+        name: 'Shivam Gupta',
+        email: 'citizen.rti@gov.in',
+        role: 'Citizen Applicant',
+        state: 'Maharashtra',
+        digilockerVerified: true,
+        aadhaarMasked: 'XXXX-XXXX-8921'
+      };
+      set({ user: defaultCitizen });
     }
   },
   
