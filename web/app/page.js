@@ -84,14 +84,8 @@ export default function Home() {
           <div className="flex flex-col items-center text-center -translate-y-5 sm:-translate-y-8 md:-translate-y-12">
             <h1 className="text-[23px] min-[360px]:text-[26px] sm:text-4xl md:text-5xl lg:text-[54px] font-extrabold text-[#0B1C3F] tracking-tight leading-[1.28] sm:leading-[1.18] mb-2.5 sm:mb-3 px-1">
               <span className="block">{t.hero.headingLine1}</span>
-              <span className="block mt-1 sm:mt-2">
-                {t.hero.headingLine2.includes("Accessible") ? (
-                  <>
-                    We make it <span className="text-[#2563EB]">Accessible.</span>
-                  </>
-                ) : (
-                  <span className="text-[#2563EB]">{t.hero.headingLine2}</span>
-                )}
+              <span className="block mt-1 sm:mt-2 text-[#2563EB]">
+                {t.hero.headingLine2}
               </span>
             </h1>
             <p className="text-xs min-[360px]:text-sm sm:text-base md:text-lg text-slate-600 font-medium mb-3 sm:mb-4 max-w-2xl px-2">
