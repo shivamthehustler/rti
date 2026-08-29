@@ -154,7 +154,7 @@ export default function Home() {
                 {/* Bottom CTA & Footnote (No top border) */}
                 <div className="relative z-10 mt-6 flex items-center justify-between gap-4">
                   <Link
-                    href="/get-information"
+                    href="/dashboard/flash-rti"
                     className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-xs sm:text-sm text-[#2563EB] bg-white hover:bg-blue-50 shadow-md shadow-blue-950/20 hover:shadow-lg transition-all duration-200 cursor-pointer group/btn whitespace-nowrap"
                   >
                     <span>{t.mainActions.getInformation.btn}</span>
@@ -219,7 +219,7 @@ export default function Home() {
                 {/* Bottom CTA & Footnote (No top border) */}
                 <div className="relative z-10 mt-6 flex items-center justify-between gap-4">
                   <Link
-                    href="/submit-request"
+                    href="/dashboard/file-rti"
                     className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-xs sm:text-sm text-[#2563EB] bg-white hover:bg-blue-50/80 border border-blue-200 hover:border-blue-400 shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer group/btn whitespace-nowrap"
                   >
                     <span>{t.mainActions.fileRTI.btn}</span>
