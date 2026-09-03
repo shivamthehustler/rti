@@ -1,286 +1,115 @@
+import React, { memo } from "react";
 import { EmblemIcon } from "./Icons";
 
-export default function DottedWave({ 
-  className = "", 
-  opacity,
-  hideEmblem = false,
-  variant = "full" // "full", "card", "icon", "section-feathered"
-}) {
-  // -------------------------------------------------------------
-  // 1. ICON VARIANT ("How It Works" circles)
-  // Very small, micro-scaled dotted concentric arcs with soft blur and feathering
-  // -------------------------------------------------------------
-  if (variant === "icon") {
-    const iconArcs = [];
-    const arcCount = 14;
-    for (let j = 0; j < arcCount; j++) {
-      const r = 12 + j * 6;
-      const circleOpacity = Math.max(0.12, 0.44 - (j / arcCount) * 0.26);
-      iconArcs.push(
-        <circle
-          key={`ia-${j}`}
-          cx="2"
-          cy="98"
-          r={r}
-          fill="none"
-          stroke={j % 2 === 0 ? "#3B82F6" : "#60A5FA"}
-          strokeWidth={0.7}
-          strokeDasharray="0.8 3.2"
-          strokeLinecap="round"
-          opacity={circleOpacity}
-        />
-      );
-    }
-
-    return (
-      <div 
-        className={`absolute inset-0 pointer-events-none overflow-hidden z-0 rounded-[inherit] ${className}`}
-        style={opacity !== undefined ? { opacity } : undefined}
-      >
-        {/* Soft Ambient Center Glow */}
-        <div 
-          className="absolute inset-0 z-0"
-          style={{
-            background: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.75) 0%, rgba(235,244,254,0.30) 65%, transparent 100%)'
-          }}
-        />
-
-        {/* Soft Blurred & Micro-Dotted SVG layer with edge feathering */}
-        <div 
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            filter: 'blur(0.4px)',
-            maskImage:
-              'radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.90) 55%, rgba(0,0,0,0.25) 75%, transparent 88%)',
-            WebkitMaskImage:
-              'radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.90) 55%, rgba(0,0,0,0.25) 75%, transparent 88%)',
-          }}
-        >
-          <svg
-            className="w-full h-full"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-          >
-            <g>{iconArcs}</g>
-          </svg>
-        </div>
-      </div>
+// Precomputed static SVG paths & circles at module scope (0ms render overhead)
+const buildStaticIconArcs = () => {
+  const iconArcs = [];
+  const arcCount = 14;
+  for (let j = 0; j < arcCount; j++) {
+    const r = 12 + j * 6;
+    const circleOpacity = Math.max(0.12, 0.44 - (j / arcCount) * 0.26);
+    iconArcs.push(
+      <circle
+        key={`ia-${j}`}
+        cx="2"
+        cy="98"
+        r={r}
+        fill="none"
+        stroke={j % 2 === 0 ? "#3B82F6" : "#60A5FA"}
+        strokeWidth={0.7}
+        strokeDasharray="0.8 3.2"
+        strokeLinecap="round"
+        opacity={circleOpacity}
+      />
     );
   }
+  return iconArcs;
+};
 
-  // -------------------------------------------------------------
-  // 2. CARD VARIANT (4 cards in "Built for Citizen Security...")
-  // Separate top-left and bottom-right corner patterns with wide diagonal margin
-  // -------------------------------------------------------------
-  if (variant === "card") {
-    const topLeftArcs = [];
-    const bottomRightArcs = [];
-    const count = 12;
+const buildStaticCardArcs = () => {
+  const topLeftArcs = [];
+  const bottomRightArcs = [];
+  const count = 12;
 
-    for (let j = 0; j < count; j++) {
-      const r = 16 + j * 9;
-      const circleOpacity = Math.max(0.08, 0.40 - (j / count) * 0.28);
-      
-      // Top-Left corner concentric arcs
-      topLeftArcs.push(
-        <circle
-          key={`tla-${j}`}
-          cx="-10"
-          cy="-10"
-          r={r}
-          fill="none"
-          stroke={j % 2 === 0 ? "#3B82F6" : "#60A5FA"}
-          strokeWidth={0.95}
-          strokeDasharray="1.2 4"
-          strokeLinecap="round"
-          opacity={circleOpacity}
-        />
-      );
-
-      // Bottom-Right corner concentric arcs
-      bottomRightArcs.push(
-        <circle
-          key={`bra-${j}`}
-          cx="190"
-          cy="190"
-          r={r}
-          fill="none"
-          stroke={j % 2 === 0 ? "#3B82F6" : "#60A5FA"}
-          strokeWidth={0.95}
-          strokeDasharray="1.2 4"
-          strokeLinecap="round"
-          opacity={circleOpacity}
-        />
-      );
-    }
-
-    return (
-      <div 
-        className={`absolute inset-0 pointer-events-none overflow-hidden z-0 rounded-[inherit] ${className}`}
-        style={opacity !== undefined ? { opacity } : undefined}
-      >
-        {/* Soft Ambient Center Glow */}
-        <div 
-          className="absolute inset-0 z-0"
-          style={{
-            background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.75) 0%, rgba(235,244,254,0.35) 60%, rgba(225,238,253,0.15) 100%)'
-          }}
-        />
-
-        {/* Top-Left Corner Graphic (Tightly contained to top-left corner) */}
-        <div 
-          className="absolute -top-3 -left-3 w-[150px] h-[150px] pointer-events-none"
-          style={{
-            filter: 'blur(0.35px)',
-            maskImage:
-              'radial-gradient(circle at 0% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
-            WebkitMaskImage:
-              'radial-gradient(circle at 0% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
-          }}
-        >
-          <svg className="w-full h-full" viewBox="0 0 180 180">
-            <g>{topLeftArcs}</g>
-          </svg>
-        </div>
-
-        {/* Bottom-Right Corner Graphic (Tightly contained to bottom-right corner) */}
-        <div 
-          className="absolute -bottom-3 -right-3 w-[150px] h-[150px] pointer-events-none"
-          style={{
-            filter: 'blur(0.35px)',
-            maskImage:
-              'radial-gradient(circle at 100% 100%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
-            WebkitMaskImage:
-              'radial-gradient(circle at 100% 100%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
-          }}
-        >
-          <svg className="w-full h-full" viewBox="0 0 180 180">
-            <g>{bottomRightArcs}</g>
-          </svg>
-        </div>
-
-        {/* Subtle Micro-Dot Grid */}
-        <div 
-          className="absolute inset-0 opacity-[0.025] z-0"
-          style={{
-            backgroundImage: `radial-gradient(#2563EB 1px, transparent 1px)`,
-            backgroundSize: '18px 18px'
-          }}
-        />
-      </div>
+  for (let j = 0; j < count; j++) {
+    const r = 16 + j * 9;
+    const circleOpacity = Math.max(0.08, 0.40 - (j / count) * 0.28);
+    topLeftArcs.push(
+      <circle
+        key={`tla-${j}`}
+        cx="-10"
+        cy="-10"
+        r={r}
+        fill="none"
+        stroke={j % 2 === 0 ? "#3B82F6" : "#60A5FA"}
+        strokeWidth={0.95}
+        strokeDasharray="1.2 4"
+        strokeLinecap="round"
+        opacity={circleOpacity}
+      />
+    );
+    bottomRightArcs.push(
+      <circle
+        key={`bra-${j}`}
+        cx="190"
+        cy="190"
+        r={r}
+        fill="none"
+        stroke={j % 2 === 0 ? "#3B82F6" : "#60A5FA"}
+        strokeWidth={0.95}
+        strokeDasharray="1.2 4"
+        strokeLinecap="round"
+        opacity={circleOpacity}
+      />
     );
   }
+  return { topLeftArcs, bottomRightArcs };
+};
 
-  // -------------------------------------------------------------
-  // 3. SECTION-ACTIONS VARIANT ("Get Information" / "File RTI" section)
-  // Diagonal Top-Left and Bottom-Right corner concentric arc designs
-  // Exactly matching the diagonal layout and style of the card containers below
-  // -------------------------------------------------------------
-  if (variant === "section-feathered") {
-    const topLeftArcs = [];
-    const bottomRightArcs = [];
-    const arcCount = 18;
+const buildStaticSectionArcs = () => {
+  const topLeftArcs = [];
+  const bottomRightArcs = [];
+  const arcCount = 18;
 
-    for (let j = 0; j < arcCount; j++) {
-      const r = 30 + j * 18;
-      const arcOpacity = Math.max(0.08, 0.42 - (j / arcCount) * 0.28);
-      const strokeWidth = 1.05;
-      const dash = "1.2 4.5";
+  for (let j = 0; j < arcCount; j++) {
+    const r = 30 + j * 18;
+    const arcOpacity = Math.max(0.08, 0.42 - (j / arcCount) * 0.28);
+    const strokeWidth = 1.05;
+    const dash = "1.2 4.5";
 
-      // Top-Left corner diagonal concentric arcs
-      topLeftArcs.push(
-        <circle
-          key={`stla-${j}`}
-          cx="-15"
-          cy="-15"
-          r={r}
-          fill="none"
-          stroke={j % 2 === 0 ? "#3B82F6" : "#60A5FA"}
-          strokeWidth={strokeWidth}
-          strokeDasharray={dash}
-          strokeLinecap="round"
-          opacity={arcOpacity}
-        />
-      );
-
-      // Bottom-Right corner diagonal concentric arcs
-      bottomRightArcs.push(
-        <circle
-          key={`sbra-${j}`}
-          cx="415"
-          cy="415"
-          r={r}
-          fill="none"
-          stroke={j % 2 === 0 ? "#3B82F6" : "#60A5FA"}
-          strokeWidth={strokeWidth}
-          strokeDasharray={dash}
-          strokeLinecap="round"
-          opacity={arcOpacity}
-        />
-      );
-    }
-
-    return (
-      <div 
-        className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-all duration-500 rounded-[inherit] ${className}`}
-        style={opacity !== undefined ? { opacity } : undefined}
-      >
-        {/* Soft Ambient Center Glow */}
-        <div 
-          className="absolute inset-0 z-0"
-          style={{
-            background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.80) 0%, rgba(235,244,254,0.40) 60%, rgba(225,238,253,0.2) 100%)'
-          }}
-        />
-
-        {/* Diagonal Top-Left Corner Graphic */}
-        <div 
-          className="absolute -top-12 -left-12 sm:-top-8 sm:-left-8 md:-top-4 md:-left-4 w-[380px] h-[380px] pointer-events-none"
-          style={{
-            filter: 'blur(0.35px)',
-            maskImage:
-              'radial-gradient(circle at 0% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
-            WebkitMaskImage:
-              'radial-gradient(circle at 0% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
-          }}
-        >
-          <svg className="w-full h-full" viewBox="0 0 400 400">
-            <g>{topLeftArcs}</g>
-          </svg>
-        </div>
-
-        {/* Diagonal Bottom-Right Corner Graphic */}
-        <div 
-          className="absolute -bottom-12 -right-12 sm:-bottom-8 sm:-right-8 md:-bottom-4 md:-right-4 w-[380px] h-[380px] pointer-events-none"
-          style={{
-            filter: 'blur(0.35px)',
-            maskImage:
-              'radial-gradient(circle at 100% 100%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
-            WebkitMaskImage:
-              'radial-gradient(circle at 100% 100%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
-          }}
-        >
-          <svg className="w-full h-full" viewBox="0 0 400 400">
-            <g>{bottomRightArcs}</g>
-          </svg>
-        </div>
-
-        {/* Subtle Micro-Dot Grid */}
-        <div 
-          className="absolute inset-0 opacity-[0.025] z-0"
-          style={{
-            backgroundImage: `radial-gradient(#0B1C3F 1px, transparent 1px)`,
-            backgroundSize: '24px 24px'
-          }}
-        />
-      </div>
+    topLeftArcs.push(
+      <circle
+        key={`stla-${j}`}
+        cx="-15"
+        cy="-15"
+        r={r}
+        fill="none"
+        stroke={j % 2 === 0 ? "#3B82F6" : "#60A5FA"}
+        strokeWidth={strokeWidth}
+        strokeDasharray={dash}
+        strokeLinecap="round"
+        opacity={arcOpacity}
+      />
+    );
+    bottomRightArcs.push(
+      <circle
+        key={`sbra-${j}`}
+        cx="415"
+        cy="415"
+        r={r}
+        fill="none"
+        stroke={j % 2 === 0 ? "#3B82F6" : "#60A5FA"}
+        strokeWidth={strokeWidth}
+        strokeDasharray={dash}
+        strokeLinecap="round"
+        opacity={arcOpacity}
+      />
     );
   }
+  return { topLeftArcs, bottomRightArcs };
+};
 
-  // -------------------------------------------------------------
-  // 4. FULL HERO / DEFAULT VARIANT
-  // Unmodified original implementation for Hero Section and other pages
-  // -------------------------------------------------------------
+const buildStaticFullHero = () => {
   const wavePaths = [];
   const arcPaths = [];
   const count = 38;
@@ -333,20 +162,191 @@ export default function DottedWave({
       />
     );
   }
+  return { wavePaths, arcPaths };
+};
+
+const STATIC_ICON_ARCS = buildStaticIconArcs();
+const STATIC_CARD_ARCS = buildStaticCardArcs();
+const STATIC_SECTION_ARCS = buildStaticSectionArcs();
+const STATIC_FULL_HERO = buildStaticFullHero();
+
+function DottedWaveComponent({ 
+  className = "", 
+  opacity,
+  hideEmblem = false,
+  variant = "full"
+}) {
+  if (variant === "icon") {
+    return (
+      <div 
+        className={`absolute inset-0 pointer-events-none overflow-hidden z-0 rounded-[inherit] ${className}`}
+        style={{
+          contain: 'strict',
+          transform: 'translateZ(0)',
+          willChange: 'transform',
+          ...(opacity !== undefined ? { opacity } : {})
+        }}
+      >
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            background: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.75) 0%, rgba(235,244,254,0.30) 65%, transparent 100%)'
+          }}
+        />
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            filter: 'blur(0.4px)',
+            maskImage:
+              'radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.90) 55%, rgba(0,0,0,0.25) 75%, transparent 88%)',
+            WebkitMaskImage:
+              'radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.90) 55%, rgba(0,0,0,0.25) 75%, transparent 88%)',
+          }}
+        >
+          <svg
+            className="w-full h-full"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            <g>{STATIC_ICON_ARCS}</g>
+          </svg>
+        </div>
+      </div>
+    );
+  }
+
+  if (variant === "card") {
+    const { topLeftArcs, bottomRightArcs } = STATIC_CARD_ARCS;
+    return (
+      <div 
+        className={`absolute inset-0 pointer-events-none overflow-hidden z-0 rounded-[inherit] ${className}`}
+        style={{
+          contain: 'strict',
+          transform: 'translateZ(0)',
+          willChange: 'transform',
+          ...(opacity !== undefined ? { opacity } : {})
+        }}
+      >
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.75) 0%, rgba(235,244,254,0.35) 60%, rgba(225,238,253,0.15) 100%)'
+          }}
+        />
+        <div 
+          className="absolute -top-3 -left-3 w-[150px] h-[150px] pointer-events-none"
+          style={{
+            filter: 'blur(0.35px)',
+            maskImage:
+              'radial-gradient(circle at 0% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
+            WebkitMaskImage:
+              'radial-gradient(circle at 0% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
+          }}
+        >
+          <svg className="w-full h-full" viewBox="0 0 180 180">
+            <g>{topLeftArcs}</g>
+          </svg>
+        </div>
+        <div 
+          className="absolute -bottom-3 -right-3 w-[150px] h-[150px] pointer-events-none"
+          style={{
+            filter: 'blur(0.35px)',
+            maskImage:
+              'radial-gradient(circle at 100% 100%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
+            WebkitMaskImage:
+              'radial-gradient(circle at 100% 100%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
+          }}
+        >
+          <svg className="w-full h-full" viewBox="0 0 180 180">
+            <g>{bottomRightArcs}</g>
+          </svg>
+        </div>
+        <div 
+          className="absolute inset-0 opacity-[0.025] z-0"
+          style={{
+            backgroundImage: `radial-gradient(#2563EB 1px, transparent 1px)`,
+            backgroundSize: '18px 18px'
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (variant === "section-feathered") {
+    const { topLeftArcs, bottomRightArcs } = STATIC_SECTION_ARCS;
+    return (
+      <div 
+        className={`absolute inset-0 pointer-events-none overflow-hidden z-0 rounded-[inherit] ${className}`}
+        style={{
+          contain: 'strict',
+          transform: 'translateZ(0)',
+          willChange: 'transform',
+          ...(opacity !== undefined ? { opacity } : {})
+        }}
+      >
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.80) 0%, rgba(235,244,254,0.40) 60%, rgba(225,238,253,0.2) 100%)'
+          }}
+        />
+        <div 
+          className="absolute -top-12 -left-12 sm:-top-8 sm:-left-8 md:-top-4 md:-left-4 w-[380px] h-[380px] pointer-events-none"
+          style={{
+            filter: 'blur(0.35px)',
+            maskImage:
+              'radial-gradient(circle at 0% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
+            WebkitMaskImage:
+              'radial-gradient(circle at 0% 0%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
+          }}
+        >
+          <svg className="w-full h-full" viewBox="0 0 400 400">
+            <g>{topLeftArcs}</g>
+          </svg>
+        </div>
+        <div 
+          className="absolute -bottom-12 -right-12 sm:-bottom-8 sm:-right-8 md:-bottom-4 md:-right-4 w-[380px] h-[380px] pointer-events-none"
+          style={{
+            filter: 'blur(0.35px)',
+            maskImage:
+              'radial-gradient(circle at 100% 100%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
+            WebkitMaskImage:
+              'radial-gradient(circle at 100% 100%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 75%, transparent 92%)',
+          }}
+        >
+          <svg className="w-full h-full" viewBox="0 0 400 400">
+            <g>{bottomRightArcs}</g>
+          </svg>
+        </div>
+        <div 
+          className="absolute inset-0 opacity-[0.025] z-0"
+          style={{
+            backgroundImage: `radial-gradient(#0B1C3F 1px, transparent 1px)`,
+            backgroundSize: '24px 24px'
+          }}
+        />
+      </div>
+    );
+  }
+
+  const { wavePaths, arcPaths } = STATIC_FULL_HERO;
 
   return (
     <div 
-      className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-all duration-500 rounded-[inherit] ${className}`}
-      style={opacity !== undefined ? { opacity } : undefined}
+      className={`absolute inset-0 pointer-events-none overflow-hidden z-0 rounded-[inherit] ${className}`}
+      style={{
+        contain: 'strict',
+        transform: 'translateZ(0)',
+        willChange: 'transform',
+        ...(opacity !== undefined ? { opacity } : {})
+      }}
     >
-      {/* Official Government Watermark Emblem centered in background */}
       {!hideEmblem && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
           <EmblemIcon className="w-[420px] h-[480px] text-[#0B1C3F] opacity-[0.03] select-none -translate-y-6" />
         </div>
       )}
 
-      {/* Ambient Soft Lighting Glow for Typography Readability */}
       <div 
         className="absolute inset-0 z-0"
         style={{
@@ -354,13 +354,18 @@ export default function DottedWave({
         }}
       />
 
-      {/* Left Dotted Wave Graphic (Top-Left Corner) */}
-      <div className="absolute -top-20 -left-28 sm:-top-14 sm:-left-20 md:top-0 md:left-0 w-[440px] h-[480px] sm:w-[500px] sm:h-[520px] md:w-[580px] md:h-[600px] pointer-events-none">
+      <div 
+        className="absolute -top-20 -left-28 sm:-top-14 sm:-left-20 md:top-0 md:left-0 w-[440px] h-[480px] sm:w-[500px] sm:h-[520px] md:w-[580px] md:h-[600px] pointer-events-none"
+        style={{ width: 'min(580px, 100%)', height: 'min(600px, 100%)' }}
+      >
         <svg
           className="w-full h-full"
           viewBox="0 0 600 600"
+          fill="none"
           preserveAspectRatio="xMinYMid slice"
           style={{
+            width: '100%',
+            height: '100%',
             maskImage:
               'radial-gradient(ellipse at 0% 32%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 65%, transparent 100%)',
             WebkitMaskImage:
@@ -372,13 +377,18 @@ export default function DottedWave({
         </svg>
       </div>
 
-      {/* Right Dotted Wave Graphic (Positioned Lower at Bottom-Right for Diagonal Balance) */}
-      <div className="absolute -bottom-10 -right-24 sm:-bottom-12 sm:-right-20 md:bottom-0 md:right-0 w-[440px] h-[480px] sm:w-[500px] sm:h-[520px] md:w-[580px] md:h-[600px] pointer-events-none transform scale-x-[-1] scale-y-[-1]">
+      <div 
+        className="absolute -bottom-10 -right-24 sm:-bottom-12 sm:-right-20 md:bottom-0 md:right-0 w-[440px] h-[480px] sm:w-[500px] sm:h-[520px] md:w-[580px] md:h-[600px] pointer-events-none transform scale-x-[-1] scale-y-[-1]"
+        style={{ width: 'min(580px, 100%)', height: 'min(600px, 100%)' }}
+      >
         <svg
           className="w-full h-full"
           viewBox="0 0 600 600"
+          fill="none"
           preserveAspectRatio="xMinYMax slice"
           style={{
+            width: '100%',
+            height: '100%',
             maskImage:
               'radial-gradient(ellipse at 0% 32%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 65%, transparent 100%)',
             WebkitMaskImage:
@@ -390,7 +400,6 @@ export default function DottedWave({
         </svg>
       </div>
 
-      {/* Micro-Dot Security Print Grid Texture */}
       <div 
         className="absolute inset-0 opacity-[0.03] z-0"
         style={{
@@ -401,3 +410,5 @@ export default function DottedWave({
     </div>
   );
 }
+
+export default memo(DottedWaveComponent);

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../../store/useAppStore';
-import DashboardBackgroundWave from '../../../components/DashboardBackgroundWave';
+import ModernAvatar from '../../../components/ModernAvatar';
 import { 
   UserCircle, 
   ShieldCheck, 
@@ -16,18 +16,50 @@ import {
   Smartphone,
   Calendar,
   Globe,
-  Award
+  Award,
+  Sparkles,
+  Camera,
+  Check
 } from 'lucide-react';
 
 export default function ProfilePage() {
-  const { user } = useAppStore();
+  const user = useAppStore((state) => state.user);
+  const setAvatar = useAppStore((state) => state.setAvatar);
   const userName = user?.name || 'Shivam Gupta';
   const userEmail = user?.email || 'citizen.rti@gov.in';
+  const userAvatar = user?.avatar || '/avatars/avatar-shivam.jpg';
 
   const [mobile, setMobile] = useState('+91 98765 43210');
   const [state, setState] = useState('Maharashtra');
   const [address, setAddress] = useState('Flat 402, Shanti Heights, Shivajinagar, Pune - 411005');
   const [isSaved, setIsSaved] = useState(false);
+
+  const avatarOptions = [
+    {
+      id: 'shivam',
+      name: 'Shivam (Cyber Tech)',
+      role: 'Tech Citizen Applicant',
+      src: '/avatars/avatar-shivam.jpg',
+      tag: 'Current Default',
+      glow: 'from-blue-600 to-cyan-500'
+    },
+    {
+      id: 'ananya',
+      name: 'Ananya (Civic Lead)',
+      role: 'Legal & Public Advocate',
+      src: '/avatars/avatar-ananya.jpg',
+      tag: 'Civic Specialist',
+      glow: 'from-indigo-600 to-purple-500'
+    },
+    {
+      id: 'tech',
+      name: 'Aryan (Modern Pro)',
+      role: 'Corporate RTI Lead',
+      src: '/avatars/avatar-tech.jpg',
+      tag: 'Executive',
+      glow: 'from-blue-700 to-indigo-600'
+    }
+  ];
 
   const handleSave = (e) => {
     e.preventDefault();
@@ -36,10 +68,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="w-full min-h-[calc(100vh-108px)] bg-white rounded-3xl border border-slate-200/80 shadow-xs relative overflow-hidden p-6 sm:p-8 lg:p-10 space-y-6">
-      {/* Consistent Dotted Wave Background from Landing Page */}
-      <DashboardBackgroundWave />
-
+    <div className="w-full min-h-full bg-transparent relative overflow-hidden p-4 sm:p-6 lg:p-8 space-y-6">
       <div className="relative z-10 space-y-6 max-w-5xl mx-auto">
         {/* Header Banner */}
         <div className="bg-white/95 backdrop-blur-xs p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -78,10 +107,15 @@ export default function ProfilePage() {
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-4 relative z-10">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 text-white font-black text-2xl flex items-center justify-center shadow-lg">
-                {userName.charAt(0)}
-              </div>
+            <div className="flex items-center gap-5">
+              <ModernAvatar
+                src={userAvatar}
+                name={userName}
+                size="lg"
+                showBadge={true}
+                status="verified"
+                className="ring-4 ring-white/20 shadow-2xl"
+              />
               <div>
                 <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight">{userName}</h2>
                 <p className="text-xs sm:text-sm text-blue-200 font-medium">
@@ -111,6 +145,73 @@ export default function ProfilePage() {
             </div>
           </div>
         </motion.div>
+
+        {/* 3D Modern Avatar Persona Selector */}
+        <div className="bg-white/95 backdrop-blur-xs p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div>
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-blue-600" />
+                <h2 className="text-lg font-bold text-[#0B192C]">Modern 3D Citizen Avatar</h2>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                Choose your official high-fidelity 3D profile persona for statutory portal interactions.
+              </p>
+            </div>
+            <span className="text-xs font-semibold px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-full w-fit">
+              DigiLocker Verified Graphic
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+            {avatarOptions.map((option) => {
+              const isSelected = userAvatar === option.src;
+              return (
+                <div
+                  key={option.id}
+                  onClick={() => setAvatar && setAvatar(option.src)}
+                  className={`p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer relative flex flex-col items-center text-center gap-3 group ${
+                    isSelected
+                      ? 'border-blue-600 bg-blue-50/60 shadow-lg shadow-blue-500/10'
+                      : 'border-slate-200 hover:border-blue-300 hover:bg-slate-50/60'
+                  }`}
+                >
+                  {isSelected && (
+                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-sm">
+                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    </div>
+                  )}
+
+                  <ModernAvatar
+                    src={option.src}
+                    name={option.name}
+                    size="lg"
+                    showBadge={true}
+                    status="verified"
+                    className="shadow-xl group-hover:scale-105 transition-transform"
+                  />
+
+                  <div className="space-y-1">
+                    <p className="font-bold text-slate-900 text-sm group-hover:text-blue-600 transition-colors">
+                      {option.name}
+                    </p>
+                    <p className="text-[11px] text-slate-500 font-medium">{option.role}</p>
+                  </div>
+
+                  <span
+                    className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                      isSelected
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-600 group-hover:bg-blue-100 group-hover:text-blue-700'
+                    }`}
+                  >
+                    {isSelected ? 'Active Persona' : 'Select Persona'}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Profile Details Form */}
         <div className="bg-white/95 backdrop-blur-xs p-6 sm:p-9 rounded-3xl border border-slate-200/80 shadow-xs space-y-6">

@@ -346,8 +346,9 @@ export default function Home() {
 
 
       {/* Trust & Compliance Section */}
-      <section className="w-full py-16 md:py-20 px-4 md:px-8 bg-white border-t border-slate-200">
-        <div className="max-w-6xl mx-auto">
+      <section className="w-full py-16 md:py-20 px-4 md:px-8 bg-gradient-to-b from-[#EDF5FD] via-[#F3F7FD] to-[#F8FAFC] border-t border-blue-100/80 relative overflow-hidden">
+        <DottedWave variant="section-feathered" />
+        <div className="max-w-6xl mx-auto relative z-10">
           
           {/* Heading & Subtitle */}
           <div className="text-center mb-12 md:mb-14">
@@ -363,10 +364,9 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
             
             {/* Card 1: Data Security */}
-            <div className="relative overflow-hidden bg-gradient-to-b from-[#EDF5FD] via-[#F3F7FD] to-[#F8FAFC] border border-blue-100/90 rounded-2xl p-6 shadow-xs hover:shadow-md hover:border-blue-300 transition-all duration-300 flex flex-col justify-between group">
-              <DottedWave variant="card" />
-              <div className="relative z-10">
-                <div className="w-11 h-11 rounded-xl bg-white/90 backdrop-blur-xs border border-blue-100/90 text-[#0B1C3F] flex items-center justify-center mb-5 shrink-0 shadow-xs group-hover:scale-105 group-hover:bg-white transition-all duration-200">
+            <div className="bg-white border border-blue-100/80 hover:border-blue-300/80 rounded-2xl p-6 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+              <div>
+                <div className="w-11 h-11 rounded-xl bg-[#EDF5FD] border border-blue-100 text-[#2563EB] flex items-center justify-center mb-5 shrink-0 shadow-xs group-hover:scale-105 group-hover:bg-[#2563EB] group-hover:text-white transition-all duration-200">
                   <ShieldCheckIcon className="w-5 h-5" strokeWidth={1.8} />
                 </div>
                 <h4 className="text-base font-bold text-[#0B1C3F] mb-2">
@@ -379,10 +379,9 @@ export default function Home() {
             </div>
 
             {/* Card 2: Statutory Authority */}
-            <div className="relative overflow-hidden bg-gradient-to-b from-[#EDF5FD] via-[#F3F7FD] to-[#F8FAFC] border border-blue-100/90 rounded-2xl p-6 shadow-xs hover:shadow-md hover:border-blue-300 transition-all duration-300 flex flex-col justify-between group">
-              <DottedWave variant="card" />
-              <div className="relative z-10">
-                <div className="w-11 h-11 rounded-xl bg-white/90 backdrop-blur-xs border border-blue-100/90 text-[#0B1C3F] flex items-center justify-center mb-5 shrink-0 shadow-xs group-hover:scale-105 group-hover:bg-white transition-all duration-200">
+            <div className="bg-white border border-blue-100/80 hover:border-blue-300/80 rounded-2xl p-6 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+              <div>
+                <div className="w-11 h-11 rounded-xl bg-[#EDF5FD] border border-blue-100 text-[#2563EB] flex items-center justify-center mb-5 shrink-0 shadow-xs group-hover:scale-105 group-hover:bg-[#2563EB] group-hover:text-white transition-all duration-200">
                   <ClipboardDocumentCheckIcon className="w-5 h-5" strokeWidth={1.8} />
                 </div>
                 <h4 className="text-base font-bold text-[#0B1C3F] mb-2">
@@ -395,10 +394,9 @@ export default function Home() {
             </div>
 
             {/* Card 3: Time-Bound Resolution */}
-            <div className="relative overflow-hidden bg-gradient-to-b from-[#EDF5FD] via-[#F3F7FD] to-[#F8FAFC] border border-blue-100/90 rounded-2xl p-6 shadow-xs hover:shadow-md hover:border-blue-300 transition-all duration-300 flex flex-col justify-between group">
-              <DottedWave variant="card" />
-              <div className="relative z-10">
-                <div className="w-11 h-11 rounded-xl bg-white/90 backdrop-blur-xs border border-blue-100/90 text-[#0B1C3F] flex items-center justify-center mb-5 shrink-0 shadow-xs group-hover:scale-105 group-hover:bg-white transition-all duration-200">
+            <div className="bg-white border border-blue-100/80 hover:border-blue-300/80 rounded-2xl p-6 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+              <div>
+                <div className="w-11 h-11 rounded-xl bg-[#EDF5FD] border border-blue-100 text-[#2563EB] flex items-center justify-center mb-5 shrink-0 shadow-xs group-hover:scale-105 group-hover:bg-[#2563EB] group-hover:text-white transition-all duration-200">
                   <ClockIcon className="w-5 h-5" strokeWidth={1.8} />
                 </div>
                 <h4 className="text-base font-bold text-[#0B1C3F] mb-2">
@@ -411,10 +409,9 @@ export default function Home() {
             </div>
 
             {/* Card 4: Universal Accessibility */}
-            <div className="relative overflow-hidden bg-gradient-to-b from-[#EDF5FD] via-[#F3F7FD] to-[#F8FAFC] border border-blue-100/90 rounded-2xl p-6 shadow-xs hover:shadow-md hover:border-blue-300 transition-all duration-300 flex flex-col justify-between group">
-              <DottedWave variant="card" />
-              <div className="relative z-10">
-                <div className="w-11 h-11 rounded-xl bg-white/90 backdrop-blur-xs border border-blue-100/90 text-[#0B1C3F] flex items-center justify-center mb-5 shrink-0 shadow-xs group-hover:scale-105 group-hover:bg-white transition-all duration-200">
+            <div className="bg-white border border-blue-100/80 hover:border-blue-300/80 rounded-2xl p-6 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+              <div>
+                <div className="w-11 h-11 rounded-xl bg-[#EDF5FD] border border-blue-100 text-[#2563EB] flex items-center justify-center mb-5 shrink-0 shadow-xs group-hover:scale-105 group-hover:bg-[#2563EB] group-hover:text-white transition-all duration-200">
                   <UserIcon className="w-5 h-5" strokeWidth={1.8} />
                 </div>
                 <h4 className="text-base font-bold text-[#0B1C3F] mb-2">
@@ -429,7 +426,7 @@ export default function Home() {
           </div>
 
           {/* Bottom Hallmark Line */}
-          <div className="mt-12 pt-6 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-500 font-medium max-w-6xl mx-auto">
+          <div className="mt-12 pt-6 border-t border-blue-200/60 flex flex-wrap items-center justify-between text-xs text-slate-600 font-medium max-w-6xl mx-auto">
             <span>{t.trust.hallmarkLeft}</span>
             <span>{t.trust.hallmarkRight}</span>
           </div>

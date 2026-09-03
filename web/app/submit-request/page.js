@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -273,8 +274,9 @@ const timelineItemVariants = {
 };
 
 export default function SubmitRequestPage() {
+  const router = useRouter();
   const { language, t } = useApp();
-  const { user } = useAppStore();
+  const user = useAppStore((state) => state.user);
   const sr = t.submitRequest || {};
   const loginT = t.login || {};
   const isHindi = language === 'hi';
@@ -389,11 +391,11 @@ export default function SubmitRequestPage() {
   // DigiLocker Auto-fill simulator
   const handleDigilockerAutofill = () => {
     setIsDigilockerUsed(true);
-    setValue('applicantName', 'Shivam Kumar', { shouldValidate: true });
+    setValue('applicantName', 'Test User', { shouldValidate: true });
     setValue('gender', 'male', { shouldValidate: true });
     // Keep user's login email intact; only set fallback email if field is completely blank
     if (!getValues('email') && !user?.email) {
-      setValue('email', 'shivam.kumar@email.com', { shouldValidate: true });
+      setValue('email', 'testuser@email.com', { shouldValidate: true });
     }
     setValue('mobile', '9876543210', { shouldValidate: true });
     setValue('address', '123, Green Park, New Delhi - 110016', { shouldValidate: true });
@@ -783,9 +785,12 @@ export default function SubmitRequestPage() {
               <p>This is a system generated receipt and does not require a signature.</p>
             </div>
             <div className="border border-slate-200 rounded-lg p-1.5 flex items-center gap-2 bg-slate-50">
-              <img 
+              <Image 
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(`https://rti.gov.in/verify?reg=${submissionData.regNo}`)}`} 
                 alt="Verification QR Code" 
+                width={40}
+                height={40}
+                unoptimized
                 className="w-10 h-10 object-contain rounded shrink-0 border border-slate-200" 
               />
               <div className="text-[9px]">
@@ -1429,7 +1434,7 @@ export default function SubmitRequestPage() {
                       <div className="flex items-center justify-between pt-6 border-t border-slate-200/80">
                         <button
                           type="button"
-                          onClick={() => window.location.href = '/'}
+                          onClick={() => router.push('/')}
                           className="text-slate-600 hover:text-slate-900 px-4 py-2 text-xs font-bold transition-colors cursor-pointer"
                         >
                           {sr.cancelBtn || "Cancel"}

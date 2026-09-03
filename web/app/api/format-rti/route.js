@@ -1,8 +1,22 @@
 import { NextResponse } from 'next/server';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 export async function POST(request) {
+  // Rate Limiting Check (20 per minute per IP)
+  const rateLimit = checkRateLimit(request, { limit: 20, windowMs: 60 * 1000, prefix: 'format-rti' });
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Rate limit exceeded. Please wait a moment before drafting more queries.' },
+      { status: 429, headers: { 'Retry-After': String(rateLimit.reset) } }
+    );
+  }
+
   try {
     const data = await request.json();
+    if (!data || typeof data !== 'object') {
+      return NextResponse.json({ error: 'Invalid request payload' }, { status: 400 });
+    }
+
     const {
       ministry,
       publicAuthority,
@@ -15,8 +29,8 @@ export async function POST(request) {
       language
     } = data;
 
-    if (!queryText || queryText.trim().length === 0) {
-      return NextResponse.json({ error: 'Input query text is required' }, { status: 400 });
+    if (!queryText || typeof queryText !== 'string' || queryText.trim().length === 0 || queryText.length > 3500) {
+      return NextResponse.json({ error: 'Input query text is required and must be under 3500 characters' }, { status: 400 });
     }
 
     // Step 1: Verification LLM Check (Detect Non-Genuine / Gibberish Input)
@@ -32,7 +46,11 @@ export async function POST(request) {
       });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY ||
+      process.env.GEMINI_API_KEY_1 ||
+      process.env.GEMINI_API_KEY_2 ||
+      process.env.GEMINI_API_KEY_3 ||
+      process.env.GOOGLE_API_KEY;
 
     if (apiKey) {
       try {
@@ -89,7 +107,7 @@ Drafting Instructions:
           }
         }
       } catch (err) {
-        console.error('Gemini API call failed, falling back to rule-based formatter:', err);
+        console.warn('Gemini API call failed, falling back to rule-based formatter:', err?.message || 'Network error');
       }
     }
 

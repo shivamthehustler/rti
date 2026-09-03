@@ -4,7 +4,6 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../../store/useAppStore';
-import DashboardBackgroundWave from '../../../components/DashboardBackgroundWave';
 import { 
   FileText, 
   Building2, 
@@ -113,7 +112,7 @@ function FileRTIContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const passedQuery = searchParams.get('query') || '';
-  const { user } = useAppStore();
+  const user = useAppStore((state) => state.user);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedMinistry, setSelectedMinistry] = useState(MINISTRIES_AND_AUTHORITIES[0].ministry);
@@ -237,10 +236,7 @@ function FileRTIContent() {
   );
 
   return (
-    <div className="w-full min-h-[calc(100vh-108px)] bg-white rounded-3xl border border-slate-200/80 shadow-xs relative overflow-hidden p-5 sm:p-8 lg:p-10 space-y-6">
-      {/* Consistent Dotted Wave Background from Landing Page */}
-      <DashboardBackgroundWave />
-
+    <div className="w-full min-h-full bg-transparent relative overflow-hidden p-4 sm:p-6 lg:p-8 space-y-6">
       <div className="relative z-10 space-y-6 max-w-5xl mx-auto">
         {/* Top Header Banner */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/95 backdrop-blur-xs p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs">

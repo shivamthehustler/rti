@@ -16,75 +16,73 @@ export default function AnimatedSearchBar({
 
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
-  const [promptIndex, setPromptIndex] = useState(0);
-  const [displayText, setDisplayText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [prevPrompts, setPrevPrompts] = useState(prompts);
   const isMounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
-  // Sync state during render if prompts prop changes
-  if (prompts !== prevPrompts) {
-    setPrevPrompts(prompts);
-    setPromptIndex(0);
-    setDisplayText("");
-    setIsDeleting(false);
-  }
-
   const timeoutRef = useRef(null);
+  const displayTextSpanRef = useRef(null);
+  const stateRef = useRef({
+    promptIndex: 0,
+    charIndex: 0,
+    isDeleting: false
+  });
 
-  // Handle Typing & Backspacing animation loop
+  // Handle Typing & Backspacing animation loop with zero React re-render thrashing
   useEffect(() => {
     if (!isMounted) return;
 
-    // Pause animation if user is focused on input or has entered text
     if (isFocused || query.trim() !== "") {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       return;
     }
 
-    // Respect reduced motion settings
+    const currentPrompts = prompts && prompts.length > 0 ? prompts : [""];
+
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mediaQuery.matches) {
-      const timer = setTimeout(() => {
-        setDisplayText(prompts[0] || "");
-      }, 0);
-      return () => clearTimeout(timer);
+      if (displayTextSpanRef.current) {
+        displayTextSpanRef.current.textContent = currentPrompts[0] || "";
+      }
+      return;
     }
 
-    const currentPrompt = prompts[promptIndex] || prompts[0];
+    const tick = () => {
+      const state = stateRef.current;
+      const currentPrompt = currentPrompts[state.promptIndex % currentPrompts.length] || "";
 
-    const handleTypewriter = () => {
-      if (!isDeleting) {
-        // Typing characters out
-        if (displayText.length < currentPrompt.length) {
-          setDisplayText(currentPrompt.slice(0, displayText.length + 1));
-          timeoutRef.current = setTimeout(handleTypewriter, 60);
+      if (!state.isDeleting) {
+        if (state.charIndex < currentPrompt.length) {
+          state.charIndex += 1;
+          if (displayTextSpanRef.current) {
+            displayTextSpanRef.current.textContent = currentPrompt.slice(0, state.charIndex);
+          }
+          timeoutRef.current = setTimeout(tick, 60);
         } else {
-          // Finished typing full phrase -> pause to let user read
           timeoutRef.current = setTimeout(() => {
-            setIsDeleting(true);
-          }, 2200);
+            state.isDeleting = true;
+            tick();
+          }, 2400);
         }
       } else {
-        // Backspacing / deleting characters
-        if (displayText.length > 0) {
-          setDisplayText(currentPrompt.slice(0, displayText.length - 1));
-          timeoutRef.current = setTimeout(handleTypewriter, 30);
+        if (state.charIndex > 0) {
+          state.charIndex -= 1;
+          if (displayTextSpanRef.current) {
+            displayTextSpanRef.current.textContent = currentPrompt.slice(0, state.charIndex);
+          }
+          timeoutRef.current = setTimeout(tick, 30);
         } else {
-          // Finished deleting phrase -> switch to next prompt & start typing
-          setIsDeleting(false);
-          setPromptIndex((prev) => (prev + 1) % prompts.length);
-          timeoutRef.current = setTimeout(handleTypewriter, 350);
+          state.isDeleting = false;
+          state.promptIndex = (state.promptIndex + 1) % currentPrompts.length;
+          timeoutRef.current = setTimeout(tick, 350);
         }
       }
     };
 
-    timeoutRef.current = setTimeout(handleTypewriter, isDeleting ? 30 : 60);
+    timeoutRef.current = setTimeout(tick, 200);
 
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [displayText, isDeleting, promptIndex, isFocused, query, prompts, isMounted]);
+  }, [isFocused, query, prompts, isMounted]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -109,6 +107,7 @@ export default function AnimatedSearchBar({
         {/* Real Input Element with Left Padding */}
         <input
           type="text"
+          data-search-input="true"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsFocused(true)}
@@ -125,8 +124,11 @@ export default function AnimatedSearchBar({
           }`}
           aria-hidden="true"
         >
-          <span className="text-slate-400 text-base font-normal truncate max-w-full leading-normal">
-            {displayText}
+          <span
+            ref={displayTextSpanRef}
+            className="text-slate-400 text-base font-normal truncate max-w-full leading-normal"
+          >
+            {prompts[0] || ""}
           </span>
           <span className="inline-block w-[2px] h-[1.15em] bg-blue-600 align-middle ml-0.5 rounded-full animate-[pulse_1s_infinite]" />
         </div>

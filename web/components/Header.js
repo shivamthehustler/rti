@@ -1,34 +1,52 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { ChevronDownIcon, LogoIndia, UserIcon, GlobeIcon, AnimatedMenuIcon, ChevronRightIcon } from './Icons';
 import { useApp } from '../context/AppContext';
 import { useAppStore } from '../store/useAppStore';
+import ModernAvatar from './ModernAvatar';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hoveredNav, setHoveredNav] = useState(null);
   const { language, setLanguage, fontSize, setFontSize, t } = useApp();
-  const { user, logoutUser } = useAppStore();
+  const user = useAppStore((state) => state.user);
+  const logoutUser = useAppStore((state) => state.logoutUser);
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      const isMod = e.metaKey || e.ctrlKey;
+      // ⌘ + Shift + O or Ctrl + Shift + O -> Open Flash RTI / New Chat
+      if (isMod && e.shiftKey && (e.key?.toLowerCase() === 'o' || e.code === 'KeyO')) {
+        e.preventDefault();
+        e.stopPropagation();
+        router.push('/dashboard/flash-rti?focus=1');
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [router]);
 
   const isActive = (path) => {
     if (!path || !pathname) return false;
     if (path === '/') return pathname === '/';
     if (path === '/faqs') return pathname.startsWith('/faqs') || pathname.startsWith('/faq');
     if (path === '/contact') return pathname.startsWith('/contact');
+    if (path.includes('flash-rti')) return pathname.startsWith('/flash-rti') || pathname.startsWith('/dashboard/flash-rti');
     return pathname.startsWith(path);
   };
 
   const navItems = [
     { key: 'home', label: t.header.nav.home, href: '/' },
-    // { key: 'getInformation', label: t.header.nav.getInformation, href: '/get-information' },
+    { key: 'flashRTI', label: 'Flash RTI', href: user ? '/dashboard/flash-rti' : '/login?redirect=/dashboard/flash-rti' },
     { key: 'fileRTI', label: t.header.nav.fileRTI, href: '/submit-request' },
     { key: 'guide', label: t.header.nav.guide, href: '/guide' },
     { key: 'faqs', label: t.header.nav.faqs, href: '/faqs' },
@@ -120,90 +138,92 @@ export default function Header() {
 
         {/* Right Side Controls (Language Toggle + Desktop Links + Hamburger Menu) */}
         <div className="flex items-stretch gap-2 sm:gap-3 lg:gap-6 shrink-0">
-          {/* Desktop Navigation Links with Smooth Animated Active & Hover Highlights */}
-          <nav 
-            onMouseLeave={() => setHoveredNav(null)}
-            className="hidden lg:flex items-stretch gap-1 xl:gap-2 text-sm font-medium text-gray-700 relative"
-          >
-            {navItems.map((item) => {
-              const active = isActive(item.href);
-              const isHovered = hoveredNav === item.key;
+          {/* Desktop Navigation Links with Subtle, Professional & Smooth Dynamic Transitions */}
+          <LayoutGroup id="header-nav-tabs">
+            <nav 
+              onMouseLeave={() => setHoveredNav(null)}
+              className="hidden lg:flex items-stretch gap-1 xl:gap-1.5 text-sm font-semibold text-gray-700 relative"
+            >
+              {navItems.map((item) => {
+                const active = isActive(item.href);
+                const isHovered = hoveredNav === item.key;
 
-              const content = (
-                <span className="relative z-10 px-3 py-1.5">
-                  {item.label}
-                </span>
-              );
+                const innerContent = (
+                  <>
+                    {/* Floating Hover Morph Pill with Gentle, Slower Dynamic Glide */}
+                    <AnimatePresence>
+                      {isHovered && (
+                        <motion.div
+                          layoutId="header-nav-hover-morph-pill"
+                          className="absolute inset-y-2.5 inset-x-0 rounded-xl bg-slate-100/75 border border-slate-200/50 shadow-2xs -z-0 pointer-events-none"
+                          initial={{ opacity: 0, scale: 0.97 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.22, ease: "easeOut" } }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 140,
+                            damping: 20,
+                            mass: 0.95
+                          }}
+                        />
+                      )}
+                    </AnimatePresence>
 
-              const innerContent = (
-                <>
-                  {/* Floating Hover Backdrop Pill */}
-                  {isHovered && (
-                    <motion.div
-                      layoutId="navbar-hover-pill"
-                      className="absolute inset-x-1 inset-y-5 bg-slate-100/90 rounded-lg -z-0"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 500,
-                        damping: 38,
-                        mass: 0.6
-                      }}
-                    />
-                  )}
+                    {/* Subtle, Slower Active Indicator Underline */}
+                    {active && (
+                      <motion.div
+                        layoutId="header-nav-active-indicator"
+                        className="absolute bottom-0 left-2.5 right-2.5 h-[2px] bg-[#2563EB] rounded-full shadow-[0_1px_4px_rgba(37,99,235,0.25)] z-20"
+                        transition={{
+                          type: "spring",
+                          stiffness: 140,
+                          damping: 20,
+                          mass: 0.95
+                        }}
+                      />
+                    )}
 
-                  {/* Active Indicator Underline with Shared Layout Animation */}
-                  {active && (
-                    <motion.div
-                      layoutId="navbar-active-indicator"
-                      className="absolute bottom-0 left-1 right-1 h-[3.5px] bg-[#2563EB] rounded-t-md shadow-[0_-1px_6px_rgba(37,99,235,0.35)] z-20"
-                      transition={{
-                        type: "spring",
-                        stiffness: 450,
-                        damping: 35,
-                        mass: 0.8
-                      }}
-                    />
-                  )}
+                    <span className={`relative z-10 px-3.5 py-1.5 rounded-lg transition-colors duration-300 ease-out ${
+                      active
+                        ? "text-[#2563EB]"
+                        : isHovered
+                          ? "text-slate-900"
+                          : "text-slate-600"
+                    }`}>
+                      {item.label}
+                    </span>
+                  </>
+                );
 
-                  {content}
-                </>
-              );
+                const commonClasses = `group relative flex items-center h-full py-3.5 whitespace-nowrap cursor-pointer select-none font-semibold`;
 
-              const commonClasses = `relative flex items-center h-full py-4 transition-colors duration-200 whitespace-nowrap cursor-pointer select-none ${
-                active 
-                  ? "text-[#2563EB] font-semibold" 
-                  : "text-gray-700 hover:text-[#2563EB] font-medium"
-              }`;
+                if (item.href) {
+                  return (
+                    <Link
+                      key={item.key}
+                      href={item.href}
+                      onMouseEnter={() => setHoveredNav(item.key)}
+                      className={commonClasses}
+                    >
+                      {innerContent}
+                    </Link>
+                  );
+                }
 
-              if (item.href) {
                 return (
-                  <Link
+                  <button
                     key={item.key}
-                    href={item.href}
+                    type="button"
+                    onClick={item.action}
                     onMouseEnter={() => setHoveredNav(item.key)}
                     className={commonClasses}
                   >
                     {innerContent}
-                  </Link>
+                  </button>
                 );
-              }
-
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={item.action}
-                  onMouseEnter={() => setHoveredNav(item.key)}
-                  className={commonClasses}
-                >
-                  {innerContent}
-                </button>
-              );
-            })}
-          </nav>
+              })}
+            </nav>
+          </LayoutGroup>
 
           {/* Radix UI Headless Accessible Language Dropdown */}
           <DropdownMenu.Root>
@@ -252,12 +272,18 @@ export default function Header() {
               <div className="flex items-center gap-2">
                 <Link
                   href="/dashboard/flash-rti"
-                  className="flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-[#2563EB] border border-blue-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-2xs transition-colors cursor-pointer"
+                  className="flex items-center gap-2 bg-blue-50/80 hover:bg-blue-100/80 text-[#2563EB] border border-blue-200/80 px-2.5 py-1 rounded-xl text-xs font-bold shadow-2xs transition-all cursor-pointer"
                   title="Open Citizen Dashboard"
                 >
-                  <UserIcon className="w-3.5 h-3.5 text-[#2563EB]" />
+                  <ModernAvatar
+                    src={user.avatar}
+                    name={user.name || user.username}
+                    size="xs"
+                    showBadge={false}
+                    className="w-6 h-6"
+                  />
                   <span className="max-w-[120px] truncate">{user.name || user.username}</span>
-                  <span className="text-[10px] bg-[#2563EB] text-white px-1.5 py-0.2 rounded font-medium ml-0.5">Dashboard</span>
+                  <span className="text-[10px] bg-[#2563EB] text-white px-1.5 py-0.5 rounded-md font-medium ml-0.5 shadow-2xs">Dashboard</span>
                 </Link>
                 <button
                   type="button"

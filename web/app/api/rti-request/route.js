@@ -1,34 +1,51 @@
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
+import { checkRateLimit } from "@/lib/rateLimit";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PINCODE_REGEX = /^\d{6}$/;
+
+function sanitize(val, maxLen = 255) {
+  if (typeof val !== "string") return "";
+  return val.trim().slice(0, maxLen);
+}
 
 export async function POST(request) {
+  // 1. Rate Limiting Check (10 requests/minute per IP)
+  const rateLimit = checkRateLimit(request, { limit: 10, windowMs: 60 * 1000, prefix: "rti-submit" });
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { success: false, error: "Too many submission attempts. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": String(rateLimit.reset) } }
+    );
+  }
+
   try {
     const body = await request.json();
+    if (!body || typeof body !== "object") {
+      return NextResponse.json({ success: false, error: "Invalid JSON body" }, { status: 400 });
+    }
 
-    const {
-      ministry_department,
-      public_authority,
+    const ministry_department = sanitize(body.ministry_department, 200);
+    const public_authority = sanitize(body.public_authority, 200);
+    const digilocker = Boolean(body.digilocker);
+    const name = sanitize(body.name, 120);
+    const gender = sanitize(body.gender, 20);
+    const address = sanitize(body.address, 500);
+    const pin_code = sanitize(body.pin_code, 10);
+    const email = sanitize(body.email, 120);
+    const rti_text = typeof body.rti_text === "string" ? body.rti_text.trim().slice(0, 4000) : "";
 
-      digilocker,
-      name,
-      gender,
-      address,
-      pin_code,
-      
-      is_bpl,
-      bpl_card_number,
-      bpl_card_filename,
-      year_of_issue,
-      issuing_authority,
-      
-      email,
-      rti_text,
-    } = body;
-
-    console.log(body)
+    const is_bpl = Boolean(body.is_bpl);
+    const bpl_card_number = is_bpl ? sanitize(body.bpl_card_number, 60) : null;
+    // Prevent path traversal in filename
+    const rawFilename = is_bpl ? sanitize(body.bpl_card_filename, 100) : null;
+    const bpl_card_filename = rawFilename ? rawFilename.replace(/[^a-zA-Z0-9._-]/g, "_") : null;
+    const year_of_issue = is_bpl ? sanitize(body.year_of_issue, 10) : null;
+    const issuing_authority = is_bpl ? sanitize(body.issuing_authority, 150) : null;
 
     // --------------------------------------------------
-    // Required fields
+    // Required fields validation
     // --------------------------------------------------
 
     if (!ministry_department) {
@@ -45,45 +62,26 @@ export async function POST(request) {
       );
     }
 
-    if (!email) {
+    if (!email || !EMAIL_REGEX.test(email)) {
       return NextResponse.json(
-        { success: false, error: "Email is required" },
+        { success: false, error: "A valid email address is required" },
         { status: 400 }
       );
     }
 
-    if (!rti_text) {
+    if (!rti_text || rti_text.length < 10) {
       return NextResponse.json(
-        { success: false, error: "RTI text is required" },
+        { success: false, error: "RTI text must contain at least 10 characters" },
         { status: 400 }
       );
     }
 
-    // --------------------------------------------------
-    // Personal details
-    //
-    // If DigiLocker is used:
-    // Stores placeholder data in database
-    // Actual values can be updated after DigiLocker verification.
-    // --------------------------------------------------
+    const finalName = digilocker ? "<fetch_from_digilocker>" : name;
+    const finalGender = digilocker ? "<fetch_from_digilocker>" : gender;
+    const finalAddress = digilocker ? "<fetch_from_digilocker>" : address;
+    const finalPinCode = digilocker ? "<fetch_from_digilocker>" : pin_code;
 
-    const finalName = digilocker
-      ? "<fetch_from_digilocker>"
-      : name;
-
-    const finalGender = digilocker
-      ? "<fetch_from_digilocker>"
-      : gender;
-
-    const finalAddress = digilocker
-      ? "<fetch_from_digilocker>"
-      : address;
-
-    const finalPinCode = digilocker
-      ? "<fetch_from_digilocker>"
-      : pin_code;
-
-    // Personal details are compulsory when DigiLocker is not used
+    // Personal details validation when DigiLocker is not used
     if (!digilocker) {
       if (!name) {
         return NextResponse.json(
@@ -106,9 +104,9 @@ export async function POST(request) {
         );
       }
 
-      if (!pin_code) {
+      if (!pin_code || !PINCODE_REGEX.test(pin_code)) {
         return NextResponse.json(
-          { success: false, error: "Pin code is required" },
+          { success: false, error: "A valid 6-digit pin code is required" },
           { status: 400 }
         );
       }
@@ -149,7 +147,7 @@ export async function POST(request) {
     }
 
     // --------------------------------------------------
-    // Insert RTI request
+    // Parameterized Insertion
     // --------------------------------------------------
 
     const query = `
@@ -184,18 +182,18 @@ export async function POST(request) {
     const values = [
       ministry_department,
       public_authority,
-      digilocker ?? false,
+      digilocker,
 
       finalName,
       finalGender,
       finalAddress,
       finalPinCode,
       
-      is_bpl ?? false,
-      is_bpl ? bpl_card_number : null,
-      is_bpl ? bpl_card_filename : null,
-      is_bpl ? year_of_issue : null,
-      is_bpl ? issuing_authority : null,
+      is_bpl,
+      bpl_card_number,
+      bpl_card_filename,
+      year_of_issue,
+      issuing_authority,
       
       email,
       rti_text,
@@ -217,7 +215,7 @@ export async function POST(request) {
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to create RTI request",
+        error: "Failed to create RTI request. Please check input parameters.",
       },
       { status: 500 }
     );

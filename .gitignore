@@ -26,12 +26,17 @@ web/dist/
 !.yarn/releases
 !.yarn/versions
 
-# Environment Variables
+# Environment Variables & Secrets
 .env
-.env*.local
-.env.development
-.env.test
-.env.production
+.env.*
+*.env
+*.env.*
+web/.env*
+ai/.env*
+!.env.example
+!web/.env.example
+!ai/.env.example
+!*.env.example
 
 # Python / AI backend
 __pycache__/

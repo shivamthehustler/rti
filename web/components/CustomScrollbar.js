@@ -60,7 +60,7 @@ export default function CustomScrollbar() {
 
     hideTimeoutRef.current = setTimeout(() => {
       setIsScrolling(false);
-    }, 1000);
+    }, 1200);
   }, [syncThumbPosition]);
 
   useEffect(() => {
@@ -76,12 +76,21 @@ export default function CustomScrollbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', onResize, { passive: true });
 
+    // Observe DOM mutations to update scrollbar if page height changes dynamically
+    const resizeObserver = new ResizeObserver(() => {
+      syncThumbPosition();
+    });
+    if (document.body) {
+      resizeObserver.observe(document.body);
+    }
+
     return () => {
       cancelAnimationFrame(initRaf);
       if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
       if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', onResize);
+      resizeObserver.disconnect();
     };
   }, [handleScroll, syncThumbPosition]);
 
@@ -125,7 +134,7 @@ export default function CustomScrollbar() {
       }
       hideTimeoutRef.current = setTimeout(() => {
         setIsScrolling(false);
-      }, 1000);
+      }, 1200);
     };
 
     window.addEventListener('pointermove', handlePointerMove);
@@ -144,9 +153,9 @@ export default function CustomScrollbar() {
     >
       <div
         ref={thumbRef}
-        className={`rounded-full bg-slate-500/40 hover:bg-slate-700/70 active:bg-slate-900 w-2 cursor-default transition-[opacity,background-color] duration-200 ease-out ${
+        className={`rounded-full bg-slate-500/50 hover:bg-slate-700/80 active:bg-slate-900 w-2 cursor-default transition-[opacity,background-color] duration-200 ease-out ${
           showThumb ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        } ${isHovered || isDragging ? 'bg-slate-700/70' : ''}`}
+        } ${isHovered || isDragging ? 'bg-slate-700/80' : ''}`}
         style={{
           height: '36px',
           transform: 'translate3d(0, 0, 0)',

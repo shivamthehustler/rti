@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useMemo } from 'react';
 import { useAppStore } from '../store/useAppStore';
 
 export const dictionary = {
@@ -23,8 +23,8 @@ export const dictionary = {
       langLabel: "English"
     },
     hero: {
-      headingLine1: "Your Right to Information",
-      headingLine2: "Our Commitment to Transparency",
+      headingLine1: "Your Right to Information.",
+      headingLine2: "Our Commitment to Transparency.",
       subtitle: "Choose the faster way to get information or file an official request.",
       stats: {
         requestsReceived: "Requests Received",
@@ -402,8 +402,8 @@ export const dictionary = {
       langLabel: "हिन्दी"
     },
     hero: {
-      headingLine1: "सूचना का अधिकार - आपका अधिकार",
-      headingLine2: "पारदर्शिता के प्रति हमारी प्रतिबद्धता",
+      headingLine1: "सूचना आपका अधिकार।",
+      headingLine2: "पारदर्शिता हमारी प्रतिबद्धता।",
       subtitle: "सूचना प्राप्त करने या आधिकारिक आवेदन दर्ज करने का तीव्र मार्ग चुनें।",
       stats: {
         requestsReceived: "प्राप्त कुल आवेदन",
@@ -782,26 +782,22 @@ export function AppProvider({ children }) {
 
   // Load stored preferences & user state on mount
   useEffect(() => {
-    const timer = setTimeout(() => {
-      try {
-        initUser();
-        const savedLang = localStorage.getItem('rti_portal_lang');
-        if (savedLang === 'hi' || savedLang === 'en') {
-          setLanguage(savedLang);
-        }
-        const savedFontSize = localStorage.getItem('rti_portal_fontsize');
-        if (savedFontSize !== null) {
-          const parsed = parseInt(savedFontSize, 10);
-          if (parsed === -1 || parsed === 0 || parsed === 1) {
-            setFontSize(parsed);
-          }
-        }
-      } catch (e) {
-        // Ignore storage errors
+    try {
+      initUser();
+      const savedLang = localStorage.getItem('rti_portal_lang');
+      if (savedLang === 'hi' || savedLang === 'en') {
+        setLanguage(savedLang);
       }
-    }, 0);
-
-    return () => clearTimeout(timer);
+      const savedFontSize = localStorage.getItem('rti_portal_fontsize');
+      if (savedFontSize !== null) {
+        const parsed = parseInt(savedFontSize, 10);
+        if (parsed === -1 || parsed === 0 || parsed === 1) {
+          setFontSize(parsed);
+        }
+      }
+    } catch (e) {
+      // Ignore storage errors
+    }
   }, [setLanguage, setFontSize, initUser]);
 
   // Update root font size when fontSize state changes
@@ -818,23 +814,34 @@ export function AppProvider({ children }) {
     }
   }, [fontSize]);
 
-  const t = dictionary[language] || dictionary.en;
+  const t = useMemo(() => dictionary[language] || dictionary.en, [language]);
+
+  const contextValue = useMemo(() => ({
+    language,
+    setLanguage,
+    toggleLanguage,
+    fontSize,
+    setFontSize,
+    isWorkflowModalOpen,
+    openWorkflowModal,
+    closeWorkflowModal,
+    toggleWorkflowModal,
+    t
+  }), [
+    language,
+    setLanguage,
+    toggleLanguage,
+    fontSize,
+    setFontSize,
+    isWorkflowModalOpen,
+    openWorkflowModal,
+    closeWorkflowModal,
+    toggleWorkflowModal,
+    t
+  ]);
 
   return (
-    <AppContext.Provider
-      value={{
-        language,
-        setLanguage,
-        toggleLanguage,
-        fontSize,
-        setFontSize,
-        isWorkflowModalOpen,
-        openWorkflowModal,
-        closeWorkflowModal,
-        toggleWorkflowModal,
-        t
-      }}
-    >
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );

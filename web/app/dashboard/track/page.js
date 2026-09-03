@@ -3,7 +3,6 @@
 import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import DashboardBackgroundWave from '../../../components/DashboardBackgroundWave';
 import { 
   Crosshair, 
   Search, 
@@ -56,10 +55,7 @@ function TrackContent() {
   ];
 
   return (
-    <div className="w-full min-h-[calc(100vh-108px)] bg-white rounded-3xl border border-slate-200/80 shadow-xs relative overflow-hidden p-6 sm:p-8 lg:p-10 space-y-6">
-      {/* Consistent Dotted Wave Background from Landing Page */}
-      <DashboardBackgroundWave />
-
+    <div className="w-full min-h-full bg-transparent relative overflow-hidden p-4 sm:p-6 lg:p-8 space-y-6">
       <div className="relative z-10 space-y-6 max-w-5xl mx-auto">
         {/* Header Banner */}
         <div className="bg-white/95 backdrop-blur-xs p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
