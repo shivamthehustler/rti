@@ -921,12 +921,45 @@ function FlashRTIContent() {
       processedParamRef.current = `history_${historyIdParam}`;
       const loadHistorySession = async () => {
         try {
-          const res = await fetch(`/api/history?id=${historyIdParam}`);
+          if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+          }
+
+          // 1. Try local cache for instant zero-latency loading
+          if (typeof window !== "undefined") {
+            try {
+              const cached = JSON.parse(localStorage.getItem('rti_flash_history_cached') || '[]');
+              const matched = cached.find(h => String(h.id) === String(historyIdParam) || h.query?.toLowerCase() === historyIdParam.toLowerCase());
+              if (matched && matched.data?.result) {
+                setSearchQuery(matched.query || '');
+                setActiveResult(matched.data.result);
+                setPipelineState('completed');
+                setSteps(INITIAL_STEPS.map(s => ({
+                  ...s,
+                  status: 'completed',
+                  subtext: 'Verified from archive'
+                })));
+                return;
+              }
+            } catch (e) {}
+          }
+
+          // 2. Fetch from production backend API / PostgreSQL database
+          const res = await fetch(`/api/history?id=${encodeURIComponent(historyIdParam)}`);
           if (res.ok) {
             const historyItem = await res.json();
-            if (historyItem && historyItem.query) {
-              setSearchQuery(historyItem.query);
-              startPipeline(historyItem.query);
+            if (historyItem) {
+              setSearchQuery(historyItem.query || '');
+              if (historyItem.data?.result) {
+                setActiveResult(historyItem.data.result);
+                setPipelineState('completed');
+                setSteps(INITIAL_STEPS.map(s => ({
+                  ...s,
+                  status: 'completed',
+                  subtext: 'Verified from archive'
+                })));
+                return;
+              }
             }
           }
         } catch (err) {

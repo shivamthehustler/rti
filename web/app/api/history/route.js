@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import pool from "@/lib/db";
-import { getInMemoryHistory, getHistoryById, addHistoryEntry } from "@/lib/historyStore";
+import { getAllHistory, getHistoryById, addHistoryEntry } from "@/lib/historyStore";
 import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function GET(request) {
-    const rateLimit = checkRateLimit(request, { limit: 60, windowMs: 60 * 1000, prefix: "history-get" });
+    const rateLimit = checkRateLimit(request, { limit: 120, windowMs: 60 * 1000, prefix: "history-get" });
     if (!rateLimit.allowed) {
         return NextResponse.json(
             { error: "Too many requests. Please slow down." },
@@ -15,34 +14,13 @@ export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url);
         const rawId = searchParams.get("id");
+        const rawQuery = searchParams.get("query");
+        const lookup = rawId || rawQuery;
 
-        if (rawId) {
-            // Strict ID format validation (e.g. hist-123456 or numeric integer)
-            const id = rawId.trim();
-            if (!/^[a-zA-Z0-9_-]{1,64}$/.test(id)) {
-                return NextResponse.json(
-                    { error: "Invalid history identifier" },
-                    { status: 400 }
-                );
-            }
-
-            if (process.env.DATABASE_URL) {
-                try {
-                    const result = await pool.query(
-                        "SELECT id, query, data, created_at FROM user_history WHERE CAST(id AS TEXT) = $1",
-                        [id]
-                    );
-                    if (result && result.rows && result.rows.length > 0) {
-                        return NextResponse.json(result.rows[0]);
-                    }
-                } catch (dbErr) {
-                    console.warn("DB history item fetch fallback:", dbErr?.message);
-                }
-            }
-
-            const inMem = getHistoryById(id);
-            if (inMem) {
-                return NextResponse.json(inMem);
+        if (lookup) {
+            const item = await getHistoryById(lookup);
+            if (item) {
+                return NextResponse.json(item);
             }
 
             return NextResponse.json(
@@ -50,28 +28,8 @@ export async function GET(request) {
                 { status: 404 }
             );
         } else {
-            if (process.env.DATABASE_URL) {
-                try {
-                    const result = await pool.query(
-                        "SELECT id, query, created_at FROM user_history ORDER BY created_at DESC LIMIT 50"
-                    );
-                    if (result && result.rows && result.rows.length > 0) {
-                        return NextResponse.json(result.rows);
-                    }
-                } catch (dbErr) {
-                    console.warn("DB history list fetch fallback:", dbErr?.message);
-                }
-            }
-
-            // Return in-memory list
-            const list = getInMemoryHistory();
-            return NextResponse.json(
-                list.map(h => ({
-                    id: h.id,
-                    query: h.query,
-                    created_at: h.created_at
-                }))
-            );
+            const list = await getAllHistory();
+            return NextResponse.json(list);
         }
     } catch (error) {
         console.error("Error fetching user history:", error);

@@ -85,7 +85,12 @@ function DashboardLayoutContent({ children }) {
           setHistoryList(data);
           if (typeof window !== "undefined") {
             try {
-              localStorage.setItem('rti_flash_history_cached', JSON.stringify(data));
+              const existingCached = JSON.parse(localStorage.getItem('rti_flash_history_cached') || '[]');
+              const merged = data.map(item => {
+                const existing = existingCached.find(e => String(e.id) === String(item.id));
+                return existing && existing.data ? { ...item, data: existing.data } : item;
+              });
+              localStorage.setItem('rti_flash_history_cached', JSON.stringify(merged));
             } catch (e) {}
           }
           return;
@@ -519,7 +524,7 @@ function DashboardLayoutContent({ children }) {
                                   return (
                                     <Link
                                       key={h.id}
-                                      href={`/dashboard/flash-rti?query=${encodeURIComponent(h.query)}`}
+                                      href={`/dashboard/flash-rti?historyId=${h.id}`}
                                       className={`flex items-start gap-2 px-2.5 py-1.5 rounded-lg text-xs transition-colors group/item block ${
                                         isCurrentHistory
                                           ? 'bg-blue-600/30 text-white font-medium border border-blue-400/40'

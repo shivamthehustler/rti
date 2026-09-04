@@ -310,6 +310,37 @@ const INITIAL_HISTORY = [
     }
 ];
 
+let isDbInitialized = false;
+
+export async function ensureDbInitialized() {
+    if (isDbInitialized || !process.env.DATABASE_URL) return;
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS user_history (
+                id VARCHAR(64) PRIMARY KEY,
+                query TEXT NOT NULL,
+                data JSONB NOT NULL,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE INDEX IF NOT EXISTS idx_user_history_created ON user_history(created_at DESC);
+        `);
+
+        // Check if table is empty and seed initial queries
+        const checkCount = await pool.query("SELECT COUNT(*) FROM user_history");
+        if (checkCount && checkCount.rows && parseInt(checkCount.rows[0].count, 10) === 0) {
+            for (const item of INITIAL_HISTORY) {
+                await pool.query(
+                    "INSERT INTO user_history (id, query, data, created_at) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO NOTHING",
+                    [item.id, item.query, JSON.stringify(item.data), item.created_at]
+                );
+            }
+        }
+        isDbInitialized = true;
+    } catch (err) {
+        console.warn("Database initialization notice:", err?.message);
+    }
+}
+
 if (!globalThis.__FLASH_RTI_HISTORY__) {
     globalThis.__FLASH_RTI_HISTORY__ = [...INITIAL_HISTORY];
 }
@@ -318,9 +349,61 @@ export function getInMemoryHistory() {
     return globalThis.__FLASH_RTI_HISTORY__;
 }
 
-export function getHistoryById(id) {
-    const list = globalThis.__FLASH_RTI_HISTORY__;
-    return list.find(h => String(h.id) === String(id));
+export async function getAllHistory() {
+    if (process.env.DATABASE_URL) {
+        try {
+            await ensureDbInitialized();
+            const result = await pool.query(
+                "SELECT id, query, created_at FROM user_history ORDER BY created_at DESC LIMIT 50"
+            );
+            if (result && result.rows && result.rows.length > 0) {
+                return result.rows.map(row => ({
+                    id: String(row.id),
+                    query: row.query,
+                    created_at: row.created_at
+                }));
+            }
+        } catch (dbErr) {
+            console.warn("DB getAllHistory error fallback:", dbErr?.message);
+        }
+    }
+
+    const list = globalThis.__FLASH_RTI_HISTORY__ || INITIAL_HISTORY;
+    return list.map(h => ({
+        id: String(h.id),
+        query: h.query,
+        created_at: h.created_at
+    }));
+}
+
+export async function getHistoryById(id) {
+    if (!id) return null;
+    const cleanId = String(id).trim();
+
+    if (process.env.DATABASE_URL) {
+        try {
+            await ensureDbInitialized();
+            const result = await pool.query(
+                "SELECT id, query, data, created_at FROM user_history WHERE id = $1 OR LOWER(query) = LOWER($2)",
+                [cleanId, cleanId]
+            );
+            if (result && result.rows && result.rows.length > 0) {
+                const row = result.rows[0];
+                return {
+                    id: String(row.id),
+                    query: row.query,
+                    data: typeof row.data === "string" ? JSON.parse(row.data) : row.data,
+                    created_at: row.created_at
+                };
+            }
+        } catch (dbErr) {
+            console.warn("DB getHistoryById error fallback:", dbErr?.message);
+        }
+    }
+
+    const list = globalThis.__FLASH_RTI_HISTORY__ || INITIAL_HISTORY;
+    const inMem = list.find(h => String(h.id) === cleanId || h.query?.toLowerCase() === cleanId.toLowerCase());
+    return inMem || null;
 }
 
 export async function addHistoryEntry(query, data) {
@@ -332,7 +415,10 @@ export async function addHistoryEntry(query, data) {
         created_at: new Date().toISOString()
     };
 
-    // Filter out identical query and prepend
+    // Update global in-memory singleton
+    if (!globalThis.__FLASH_RTI_HISTORY__) {
+        globalThis.__FLASH_RTI_HISTORY__ = [...INITIAL_HISTORY];
+    }
     globalThis.__FLASH_RTI_HISTORY__ = [
         entry,
         ...globalThis.__FLASH_RTI_HISTORY__.filter(h => h.query.toLowerCase() !== query.trim().toLowerCase())
@@ -340,15 +426,13 @@ export async function addHistoryEntry(query, data) {
 
     if (process.env.DATABASE_URL) {
         try {
-            const res = await pool.query(
-                "INSERT INTO user_history (query, data) VALUES ($1, $2) RETURNING id",
-                [query.trim(), JSON.stringify(data || {})]
+            await ensureDbInitialized();
+            await pool.query(
+                "INSERT INTO user_history (id, query, data, created_at) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO UPDATE SET data = $3, created_at = $4",
+                [entry.id, entry.query, JSON.stringify(entry.data), entry.created_at]
             );
-            if (res && res.rows && res.rows[0]) {
-                entry.id = res.rows[0].id;
-            }
         } catch (dbErr) {
-            console.warn("Database save history fallback:", dbErr?.message);
+            console.warn("DB addHistoryEntry error fallback:", dbErr?.message);
         }
     }
 
