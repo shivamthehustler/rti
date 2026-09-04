@@ -552,6 +552,8 @@ function FlashRTIContent() {
     focusInput();
     setTimeout(focusInput, 50);
     setTimeout(focusInput, 150);
+  }, [router]);
+
   // Natural pacing helper for authentic AI agent feel
   const minDelay = (ms) => new Promise(res => setTimeout(res, ms));
 
