@@ -44,6 +44,7 @@ function DashboardLayoutContent({ children }) {
   const setHistoryList = useAppStore((state) => state.setHistoryList);
 
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isMobileHistoryOpen, setIsMobileHistoryOpen] = useState(false);
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
@@ -53,6 +54,17 @@ function DashboardLayoutContent({ children }) {
   const isShortcutsOpenRef = useRef(isShortcutsOpen);
   const historyListRef = useRef(historyList);
   const activeHistoryIdRef = useRef(activeHistoryId);
+
+  // Mobile history drawer event trigger
+  useEffect(() => {
+    const handleOpenMobileHistory = () => {
+      setIsMobileHistoryOpen(true);
+    };
+    window.addEventListener('flash_rti_open_mobile_history', handleOpenMobileHistory);
+    return () => {
+      window.removeEventListener('flash_rti_open_mobile_history', handleOpenMobileHistory);
+    };
+  }, []);
 
   useEffect(() => {
     pathnameRef.current = pathname;
@@ -456,9 +468,9 @@ function DashboardLayoutContent({ children }) {
   };
 
   return (
-    <div className="h-screen max-h-screen bg-[#F0F6FD] lg:bg-[#030712] flex flex-col font-sans selection:bg-blue-500 selection:text-white overflow-hidden">
+    <div className="h-[100dvh] max-h-[100dvh] min-h-[100dvh] bg-[#F0F6FD] lg:bg-[#030712] flex flex-col font-sans selection:bg-blue-500 selection:text-white overflow-hidden">
       {/* Mobile Top Header - Clean, Seamless Light Bar matching the bluish canvas */}
-      <header className="lg:hidden w-full bg-[#F0F6FD]/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-2.5 flex items-center justify-between z-40 shrink-0">
+      <header className="lg:hidden w-full bg-[#F0F6FD]/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-2.5 flex items-center justify-between z-40 shrink-0 sticky top-0">
         <div className="flex items-center gap-2.5">
           <button
             type="button"
@@ -485,6 +497,22 @@ function DashboardLayoutContent({ children }) {
         </div>
 
         <div className="flex items-center gap-1">
+          {/* Mobile History Trigger Button with Badge Count */}
+          <button
+            type="button"
+            onClick={() => setIsMobileHistoryOpen(true)}
+            className="p-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl relative transition-colors cursor-pointer active:scale-95 flex items-center justify-center"
+            title="Recent Query History"
+            aria-label="Recent Query History"
+          >
+            <History className="w-5 h-5 text-slate-700" />
+            {historyList.length > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-full bg-[#2563EB] text-white text-[9.5px] font-bold flex items-center justify-center ring-2 ring-white">
+                {historyList.length > 99 ? '99+' : historyList.length}
+              </span>
+            )}
+          </button>
+
           <Link
             href="/dashboard/notifications"
             className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl relative transition-colors cursor-pointer active:scale-95"
@@ -766,22 +794,95 @@ function DashboardLayoutContent({ children }) {
                     {mainNavItems.map((item) => {
                       const active = isNavActive(item.href, item.exact);
                       const IconComponent = item.icon;
+                      const isFlashRTI = item.href === '/dashboard/flash-rti';
 
                       return (
-                        <Link
-                          key={item.name}
-                          href={item.href}
-                          prefetch={true}
-                          onClick={() => setIsMobileNavOpen(false)}
-                          className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150 ${
-                            active
-                              ? 'bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white shadow-lg shadow-blue-600/30'
-                              : 'text-slate-300 hover:text-white hover:bg-white/10'
-                          }`}
-                        >
-                          <IconComponent className="w-5 h-5 shrink-0" />
-                          <span>{item.name}</span>
-                        </Link>
+                        <div key={item.name} className="space-y-1">
+                          <div
+                            className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150 ${
+                              active
+                                ? 'bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white shadow-lg shadow-blue-600/30'
+                                : 'text-slate-300 hover:text-white hover:bg-white/10'
+                            }`}
+                          >
+                            <Link
+                              href={item.href}
+                              prefetch={true}
+                              onClick={() => setIsMobileNavOpen(false)}
+                              className="flex items-center gap-3.5 flex-1 min-w-0"
+                            >
+                              <IconComponent className="w-5 h-5 shrink-0" />
+                              <span className="truncate">{item.name}</span>
+                            </Link>
+
+                            {isFlashRTI && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setIsHistoryExpanded(prev => !prev);
+                                }}
+                                className="p-1 rounded-md hover:bg-white/20 text-slate-400 hover:text-white"
+                                aria-label="Toggle Recent Queries"
+                              >
+                                {isHistoryExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Recent Queries inside Mobile Nav Drawer */}
+                          {isFlashRTI && isHistoryExpanded && (
+                            <div className="pl-4 pr-1 py-1 space-y-1">
+                              <div className="flex items-center justify-between px-2 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                <span className="flex items-center gap-1.5 text-slate-400">
+                                  <History className="w-3 h-3 text-blue-400" />
+                                  <span>Recent Queries</span>
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    setIsMobileNavOpen(false);
+                                    handleNewSearch(e);
+                                  }}
+                                  className="text-[10px] text-blue-300 hover:text-white bg-blue-500/25 hover:bg-blue-600 px-2 py-0.5 rounded font-bold transition-all cursor-pointer flex items-center gap-0.5"
+                                >
+                                  <Plus className="w-2.5 h-2.5" />
+                                  <span>NEW</span>
+                                </button>
+                              </div>
+
+                              <div className="space-y-1 max-h-48 overflow-y-auto custom-sidebar-scroll pr-1">
+                                {historyList.length > 0 ? (
+                                  historyList.slice(0, 10).map((h) => {
+                                    const isCurrentHistory = String(activeHistoryId) === String(h.id);
+                                    return (
+                                      <Link
+                                        key={h.id}
+                                        href={`/dashboard/flash-rti?historyId=${h.id}`}
+                                        onClick={() => setIsMobileNavOpen(false)}
+                                        className={`flex items-start gap-2 px-2.5 py-1.5 rounded-lg text-xs transition-colors block ${
+                                          isCurrentHistory
+                                            ? 'bg-blue-600/30 text-white font-medium border border-blue-400/40'
+                                            : 'text-slate-400 hover:text-slate-200 hover:bg-white/10'
+                                        }`}
+                                      >
+                                        <MessageSquare className="w-3 h-3 shrink-0 mt-0.5 text-slate-500" />
+                                        <span className="truncate flex-1 text-[11px]">
+                                          {h.query}
+                                        </span>
+                                      </Link>
+                                    );
+                                  })
+                                ) : (
+                                  <p className="text-[11px] text-slate-500 px-2 py-1 italic">
+                                    No recent queries yet
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
@@ -866,20 +967,143 @@ function DashboardLayoutContent({ children }) {
           )}
         </AnimatePresence>
 
+        {/* Mobile Dedicated History Slide-Over Drawer */}
+        <AnimatePresence>
+          {isMobileHistoryOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsMobileHistoryOpen(false)}
+                className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-50 lg:hidden"
+              />
+              <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'spring', damping: 26, stiffness: 220 }}
+                className="fixed inset-y-0 right-0 w-[88vw] max-w-[340px] bg-[#040914] text-slate-200 z-50 p-5 flex flex-col justify-between shadow-2xl lg:hidden border-l border-slate-800"
+              >
+                <div className="flex flex-col h-full min-h-0">
+                  {/* History Drawer Header */}
+                  <div className="flex items-center justify-between pb-3.5 border-b border-slate-800 shrink-0">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                        <History className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-white tracking-tight">Recent Queries</h3>
+                        <p className="text-[10.5px] text-slate-400">
+                          {historyList.length} saved {historyList.length === 1 ? 'query' : 'queries'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          setIsMobileHistoryOpen(false);
+                          handleNewSearch(e);
+                        }}
+                        className="text-[11px] text-white bg-blue-600 hover:bg-blue-500 px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 shadow-sm active:scale-95"
+                        title="Start New Search"
+                      >
+                        <Plus className="w-3 h-3" />
+                        <span>NEW</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsMobileHistoryOpen(false)}
+                        className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 active:scale-95"
+                        aria-label="Close history drawer"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* History List */}
+                  <div className="flex-1 overflow-y-auto py-3 space-y-2 min-h-0 custom-sidebar-scroll pr-0.5">
+                    {historyList.length > 0 ? (
+                      historyList.map((h) => {
+                        const isCurrentHistory = String(activeHistoryId) === String(h.id);
+
+                        return (
+                          <Link
+                            key={h.id}
+                            href={`/dashboard/flash-rti?historyId=${h.id}`}
+                            onClick={() => setIsMobileHistoryOpen(false)}
+                            className={`flex items-start gap-2.5 p-3 rounded-xl text-xs transition-all active:scale-[0.98] ${
+                              isCurrentHistory
+                                ? 'bg-blue-600/25 text-white font-medium border border-blue-400/50 shadow-sm'
+                                : 'text-slate-300 hover:text-white hover:bg-white/10 border border-slate-800/60 bg-slate-900/50'
+                            }`}
+                          >
+                            <MessageSquare className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${
+                              isCurrentHistory ? 'text-blue-300' : 'text-slate-400'
+                            }`} />
+                            <div className="flex flex-col min-w-0 flex-1">
+                              <span className="text-[12px] font-medium leading-snug line-clamp-2">
+                                {h.query}
+                              </span>
+                              {h.created_at && (
+                                <span className="text-[10px] text-slate-500 mt-1">
+                                  {new Date(h.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              )}
+                            </div>
+                          </Link>
+                        );
+                      })
+                    ) : (
+                      <div className="py-10 text-center space-y-2 px-3">
+                        <div className="w-11 h-11 rounded-full bg-slate-800/60 border border-slate-700/60 flex items-center justify-center mx-auto text-slate-500">
+                          <History className="w-5 h-5" />
+                        </div>
+                        <p className="text-xs font-semibold text-slate-300">No recent queries yet</p>
+                        <p className="text-[11px] text-slate-500 leading-relaxed">
+                          Your searched queries will be automatically saved here for 1-tap instant reload.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Bottom Action */}
+                  <div className="pt-3 border-t border-slate-800 shrink-0">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        setIsMobileHistoryOpen(false);
+                        handleNewSearch(e);
+                      }}
+                      className="w-full py-2.5 px-3 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Start New RTI Query</span>
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
         {/* Clean, Full-Height Bluish Canvas - Edge-to-Edge on Mobile, Floating Rounded on Desktop */}
         <main className="h-full flex-1 min-w-0 bg-[#F0F6FD] rounded-none lg:rounded-[32px] border-0 lg:border border-slate-200/80 shadow-none lg:shadow-2xl flex flex-col relative overflow-hidden">
           {/* Full-Height Consistent Background Wave & Bluish Mesh across all dashboard pages */}
           <DashboardBackgroundWave />
 
           {/* Scrollable Children Viewport (Instant, 0ms latency rendering) */}
-          <div className="flex-1 h-full overflow-y-auto custom-canvas-scroll pb-20 lg:pb-0 relative z-10 bg-transparent">
+          <div className="flex-1 h-full overflow-y-auto custom-canvas-scroll pb-24 sm:pb-28 lg:pb-0 relative z-10 bg-transparent overscroll-y-contain">
             {children}
           </div>
         </main>
       </div>
 
       {/* Mobile Persistent Bottom Navigation Bar (Inspired by Reference UI) */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#F0F6FD]/95 backdrop-blur-md border-t border-slate-200/90 px-3 py-2 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#F0F6FD]/95 backdrop-blur-md border-t border-slate-200/90 px-2 sm:px-3 pt-1.5 pb-[max(0.6rem,env(safe-area-inset-bottom))] flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.06)] select-none touch-manipulation">
         {mobileBottomNavItems.map((item) => {
           const active = isNavActive(item.href, item.exact);
           const IconComponent = item.icon;
@@ -889,7 +1113,7 @@ function DashboardLayoutContent({ children }) {
               key={item.name}
               href={item.href}
               prefetch={true}
-              className={`flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition-all duration-150 active:scale-90 select-none ${
+              className={`flex flex-col items-center justify-center py-0.5 px-2.5 rounded-xl transition-all duration-150 active:scale-90 select-none ${
                 active
                   ? 'text-[#2563EB]'
                   : 'text-slate-400 hover:text-slate-600'
@@ -898,7 +1122,7 @@ function DashboardLayoutContent({ children }) {
               <div className={`p-1 rounded-xl transition-all ${active ? 'bg-blue-50 text-[#2563EB]' : 'text-slate-400'}`}>
                 <IconComponent className={`w-5 h-5 transition-transform ${active ? 'scale-105 stroke-[2.2]' : 'stroke-[1.8]'}`} />
               </div>
-              <span className={`text-[10.5px] mt-0.5 leading-none tracking-tight font-semibold ${active ? 'text-[#2563EB] font-bold' : 'text-slate-500'}`}>
+              <span className={`text-[10px] mt-0.5 leading-none tracking-tight font-semibold ${active ? 'text-[#2563EB] font-bold' : 'text-slate-500'}`}>
                 {item.name}
               </span>
             </Link>
