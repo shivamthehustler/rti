@@ -82,13 +82,13 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-center justify-center flex-1 w-full">
           {/* Title & Subtitle Block */}
           <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
-            <h1 className="text-[23px] min-[360px]:text-[26px] sm:text-4xl md:text-5xl lg:text-[54px] font-extrabold text-[#0B1C3F] tracking-tight leading-[1.28] sm:leading-[1.18] mb-2.5 sm:mb-3 px-1">
-              <span className="block">{t.hero.headingLine1}</span>
-              <span className="block mt-1 sm:mt-2 text-[#2563EB] whitespace-normal sm:whitespace-nowrap">
+            <h1 className="text-[23px] min-[360px]:text-[26px] sm:text-4xl md:text-5xl lg:text-[54px] font-semibold text-[#0B1C3F] tracking-tight leading-[1.28] sm:leading-[1.18] mb-2.5 sm:mb-3 px-1">
+              <span className="block font-medium sm:font-semibold">{t.hero.headingLine1}</span>
+              <span className="block mt-1 sm:mt-2 text-[#2563EB] font-medium sm:font-semibold whitespace-normal sm:whitespace-nowrap">
                 {t.hero.headingLine2}
               </span>
             </h1>
-            <p className="text-xs min-[360px]:text-sm sm:text-base md:text-lg text-slate-600 font-medium mb-3 sm:mb-4 max-w-2xl px-2">
+            <p className="text-xs min-[360px]:text-sm sm:text-base md:text-lg text-slate-600 font-normal mb-3 sm:mb-4 max-w-2xl px-2">
               {t.hero.subtitle}
             </p>
 
