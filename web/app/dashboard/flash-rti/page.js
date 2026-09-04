@@ -552,9 +552,10 @@ function FlashRTIContent() {
     focusInput();
     setTimeout(focusInput, 50);
     setTimeout(focusInput, 150);
-  }, [router]);
+  // Natural pacing helper for authentic AI agent feel
+  const minDelay = (ms) => new Promise(res => setTimeout(res, ms));
 
-  // Real Backend Execution Engine
+  // Real Backend Execution Engine with Authentic AI Agent Pacing & Live Step Feedback
   const startPipeline = useCallback(async (queryText) => {
     const text = queryText !== undefined ? queryText : searchQuery;
     if (!text || !text.trim()) return;
@@ -570,15 +571,16 @@ function FlashRTIContent() {
     setActiveResult(null);
     setErrorMessage(null);
 
-    // Reset steps
+    // Reset steps to initial state with live searching indicator on Step 0
     setSteps(INITIAL_STEPS.map((s, idx) => ({
       ...s,
       status: idx === 0 ? "in_progress" : "idle",
-      subtext: idx === 0 ? "Connecting to Government of India directory..." : "Yet to start"
+      subtext: idx === 0 ? "Analyzing constitutional jurisdiction & routing to Nodal Authority..." : "Yet to start"
     })));
 
     try {
       // Step 0: Identify concerned public authority
+      const p0StartTime = Date.now();
       const res0 = await fetch("/api/run-step", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -587,6 +589,10 @@ function FlashRTIContent() {
       });
 
       const data0 = await res0.json();
+      if (controller.signal.aborted) return;
+
+      const p0Elapsed = Date.now() - p0StartTime;
+      if (p0Elapsed < 650) await minDelay(650 - p0Elapsed);
       if (controller.signal.aborted) return;
 
       if (data0.status === "error" || !res0.ok) {
@@ -600,11 +606,12 @@ function FlashRTIContent() {
       const authorityName = data0.details?.authority?.name || data0.details?.authority?.id || "Identified Public Authority";
       setSteps(prev => prev.map((s, idx) => {
         if (idx === 0) return { ...s, status: "completed", subtext: `Target matched: ${authorityName}` };
-        if (idx === 1) return { ...s, status: "in_progress", subtext: "Searching official public API repositories..." };
+        if (idx === 1) return { ...s, status: "in_progress", subtext: "Searching open government data gazettes & APIs..." };
         return s;
       }));
 
       // Step 1: Find available government data sources
+      const p1StartTime = Date.now();
       const res1 = await fetch("/api/run-step", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -613,6 +620,10 @@ function FlashRTIContent() {
       });
 
       const data1 = await res1.json();
+      if (controller.signal.aborted) return;
+
+      const p1Elapsed = Date.now() - p1StartTime;
+      if (p1Elapsed < 600) await minDelay(600 - p1Elapsed);
       if (controller.signal.aborted) return;
 
       if (data1.status === "error" || !res1.ok) {
@@ -626,11 +637,12 @@ function FlashRTIContent() {
       const servicesCount = Array.isArray(data1.details) ? data1.details.length : 1;
       setSteps(prev => prev.map((s, idx) => {
         if (idx === 1) return { ...s, status: "completed", subtext: `${servicesCount} official government API source(s) found` };
-        if (idx === 2) return { ...s, status: "in_progress", subtext: "Selecting most relevant data service..." };
+        if (idx === 2) return { ...s, status: "in_progress", subtext: "Evaluating endpoint schemas & URL parameters..." };
         return s;
       }));
 
       // Step 2: Select most relevant data source
+      const p2StartTime = Date.now();
       const res2 = await fetch("/api/run-step", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -639,6 +651,10 @@ function FlashRTIContent() {
       });
 
       const data2 = await res2.json();
+      if (controller.signal.aborted) return;
+
+      const p2Elapsed = Date.now() - p2StartTime;
+      if (p2Elapsed < 650) await minDelay(650 - p2Elapsed);
       if (controller.signal.aborted) return;
 
       if (data2.status === "error" || !res2.ok) {
@@ -652,11 +668,12 @@ function FlashRTIContent() {
       const serviceName = data2.details?.service?.name || "Official Public API Service";
       setSteps(prev => prev.map((s, idx) => {
         if (idx === 2) return { ...s, status: "completed", subtext: `Service matched: ${serviceName}` };
-        if (idx === 3) return { ...s, status: "in_progress", subtext: "Querying official data endpoint..." };
+        if (idx === 3) return { ...s, status: "in_progress", subtext: "Querying official verified repositories & datasets..." };
         return s;
       }));
 
       // Step 3: Retrieve necessary information from the source
+      const p3StartTime = Date.now();
       const res3 = await fetch("/api/run-step", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -667,6 +684,10 @@ function FlashRTIContent() {
       const data3 = await res3.json();
       if (controller.signal.aborted) return;
 
+      const p3Elapsed = Date.now() - p3StartTime;
+      if (p3Elapsed < 700) await minDelay(700 - p3Elapsed);
+      if (controller.signal.aborted) return;
+
       if (data3.status === "error" || !res3.ok) {
         const err = data3.error || "Failed to retrieve records from the endpoint.";
         setSteps(prev => prev.map((s, idx) => idx === 3 ? { ...s, status: "error", subtext: err } : s));
@@ -675,13 +696,15 @@ function FlashRTIContent() {
         return;
       }
 
+      const recCount = Array.isArray(data3.details) ? data3.details.length : 1;
       setSteps(prev => prev.map((s, idx) => {
-        if (idx === 3) return { ...s, status: "completed", subtext: "Official records retrieved successfully" };
-        if (idx === 4) return { ...s, status: "in_progress", subtext: "Synthesizing structured citizen presentation..." };
+        if (idx === 3) return { ...s, status: "completed", subtext: `${recCount} verified statutory record(s) fetched` };
+        if (idx === 4) return { ...s, status: "in_progress", subtext: "Synthesizing structured presentation & table layout..." };
         return s;
       }));
 
       // Step 4: Convert raw data to presentable form
+      const p4StartTime = Date.now();
       const res4 = await fetch("/api/run-step", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -690,6 +713,10 @@ function FlashRTIContent() {
       });
 
       const data4 = await res4.json();
+      if (controller.signal.aborted) return;
+
+      const p4Elapsed = Date.now() - p4StartTime;
+      if (p4Elapsed < 750) await minDelay(750 - p4Elapsed);
       if (controller.signal.aborted) return;
 
       if (data4.status === "error" || !res4.ok) {
@@ -709,8 +736,26 @@ function FlashRTIContent() {
       setActiveResult(data4.details);
       setPipelineState('completed');
 
-      // Save to real history API
+      // Save to real history API & local storage
       try {
+        const newHistItem = {
+          id: 'hist-' + Date.now(),
+          query: text.trim(),
+          created_at: new Date().toISOString(),
+          data: {
+            status: "success",
+            result: data4.details
+          }
+        };
+
+        if (typeof window !== "undefined") {
+          try {
+            const cached = JSON.parse(localStorage.getItem('rti_flash_history_cached') || '[]');
+            const updated = [newHistItem, ...cached.filter(h => h.query?.toLowerCase() !== text.trim().toLowerCase())].slice(0, 50);
+            localStorage.setItem('rti_flash_history_cached', JSON.stringify(updated));
+          } catch (e) {}
+        }
+
         await fetch("/api/history", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -722,7 +767,7 @@ function FlashRTIContent() {
             }
           })
         });
-        // Dispatch event for sidebar instant update
+
         if (typeof window !== "undefined") {
           window.dispatchEvent(new CustomEvent("flash_rti_history_updated"));
         }
