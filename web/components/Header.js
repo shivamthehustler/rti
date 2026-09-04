@@ -71,11 +71,11 @@ export default function Header() {
           </div>
 
           {/* Right Side: Accessibility options (A-, A, A+ functional font resize) */}
-          <div className="flex items-center gap-2 sm:gap-4 text-gray-200 text-xs shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 text-gray-200 text-xs shrink-0">
             <div className="flex items-center gap-1 sm:gap-1.5 font-semibold select-none">
               <button 
                 onClick={() => setFontSize(-1)} 
-                className={`px-1.5 py-0.5 rounded text-xs transition-all cursor-pointer ${
+                className={`min-w-[24px] h-6 px-1.5 py-0.5 rounded text-[11px] sm:text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${
                   fontSize === -1 
                     ? 'bg-white/25 text-white font-bold ring-1 ring-white/50 shadow-2xs' 
                     : 'text-gray-300 hover:text-white hover:bg-white/10'
@@ -87,7 +87,7 @@ export default function Header() {
               </button>
               <button 
                 onClick={() => setFontSize(0)} 
-                className={`px-1.5 py-0.5 rounded text-xs transition-all cursor-pointer ${
+                className={`min-w-[24px] h-6 px-1.5 py-0.5 rounded text-[11px] sm:text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${
                   fontSize === 0 
                     ? 'bg-white/25 text-white font-bold ring-1 ring-white/50 shadow-2xs' 
                     : 'text-gray-300 hover:text-white hover:bg-white/10'
@@ -99,7 +99,7 @@ export default function Header() {
               </button>
               <button 
                 onClick={() => setFontSize(1)} 
-                className={`px-1.5 py-0.5 rounded text-xs transition-all cursor-pointer ${
+                className={`min-w-[24px] h-6 px-1.5 py-0.5 rounded text-[11px] sm:text-xs font-semibold flex items-center justify-center transition-all cursor-pointer ${
                   fontSize === 1 
                     ? 'bg-white/25 text-white font-bold ring-1 ring-white/50 shadow-2xs' 
                     : 'text-gray-300 hover:text-white hover:bg-white/10'
@@ -114,23 +114,23 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Main Header Bar - Content Shifted Slightly Downward */}
+      {/* Main Header Bar */}
       <div className="px-3 sm:px-6 md:px-12 max-w-[1536px] mx-auto flex items-stretch justify-between gap-2 sm:gap-6 min-h-[58px] sm:min-h-[72px] relative">
         {/* Logo and Title - Vertically Centered */}
-        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 sm:gap-3.5 group shrink min-w-0 py-2.5 sm:py-3.5">
+        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5 sm:gap-3.5 group shrink min-w-0 py-2.5 sm:py-3.5">
           <Image 
             src="/logo.png" 
             alt="State Emblem of India" 
             width={48} 
             height={70} 
-            className="h-7 min-[360px]:h-8 sm:h-10 md:h-11 w-auto object-contain shrink-0 transition-transform duration-300 group-hover:scale-105 my-auto" 
+            className="h-8 sm:h-10 md:h-11 w-auto object-contain shrink-0 transition-transform duration-300 group-hover:scale-105 my-auto" 
             priority 
           />
           <div className="flex flex-col min-w-0 justify-center my-auto">
-            <h1 className="text-[11px] min-[360px]:text-[12px] min-[400px]:text-[13.5px] sm:text-base md:text-lg font-extrabold text-[#0B1C3F] tracking-tight leading-tight whitespace-nowrap sm:whitespace-normal">
+            <h1 className="text-xs min-[360px]:text-[13px] sm:text-base md:text-lg font-bold text-[#0B1C3F] tracking-normal sm:tracking-tight leading-tight whitespace-nowrap sm:whitespace-normal">
               {t.header.title}
             </h1>
-            <p className="text-[6.5px] min-[340px]:text-[7.2px] min-[375px]:text-[8px] min-[410px]:text-[8.5px] sm:text-xs text-gray-500 font-medium tracking-tight whitespace-nowrap sm:whitespace-normal leading-tight mt-0.5">
+            <p className="text-[9px] min-[360px]:text-[10px] sm:text-xs text-gray-500 font-medium tracking-normal whitespace-nowrap sm:whitespace-normal leading-tight mt-0.5">
               {t.header.subtitle}
             </p>
           </div>

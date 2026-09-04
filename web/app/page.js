@@ -19,23 +19,23 @@ import {
 import { useApp } from "../context/AppContext";
 
 const ThreeDLightningIcon = () => (
-  <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
+  <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex items-center justify-center shrink-0">
     {/* Speed/motion lines extending left */}
-    <div className="absolute left-[3px] top-[30%] w-8 h-0.5 bg-white/40 rounded-full"></div>
-    <div className="absolute left-[-10px] top-[42%] w-14 h-1 bg-white/50 rounded-full"></div>
-    <div className="absolute left-[-3px] top-[50%] w-18 h-1.5 bg-white/60 rounded-full blur-[0.5px]"></div>
-    <div className="absolute left-[-6px] top-[60%] w-12 h-1 bg-white/50 rounded-full"></div>
-    <div className="absolute left-[10px] top-[72%] w-6 h-0.5 bg-white/40 rounded-full"></div>
+    <div className="absolute left-[3px] top-[30%] w-6 sm:w-8 h-0.5 bg-white/40 rounded-full"></div>
+    <div className="absolute left-[-6px] sm:left-[-10px] top-[42%] w-10 sm:w-14 h-0.5 sm:h-1 bg-white/50 rounded-full"></div>
+    <div className="absolute left-[-2px] sm:left-[-3px] top-[50%] w-12 sm:w-18 h-1 sm:h-1.5 bg-white/60 rounded-full blur-[0.5px]"></div>
+    <div className="absolute left-[-4px] sm:left-[-6px] top-[60%] w-8 sm:w-12 h-0.5 sm:h-1 bg-white/50 rounded-full"></div>
+    <div className="absolute left-[6px] sm:left-[10px] top-[72%] w-4 sm:w-6 h-0.5 bg-white/40 rounded-full"></div>
 
     {/* Drop shadow back-plate */}
-    <div className="absolute w-18 h-18 bg-blue-950/40 rounded-[18px] translate-y-3 translate-x-1 blur-md"></div>
+    <div className="absolute w-12 h-12 sm:w-16 sm:h-16 md:w-18 md:h-18 bg-blue-950/40 rounded-2xl sm:rounded-[18px] translate-y-2 sm:translate-y-3 translate-x-1 blur-md"></div>
     
     {/* 3D Deep Plate (Bottom Thickness) */}
-    <div className="absolute w-18 h-18 bg-blue-200/80 rounded-[18px] translate-y-[4px] translate-x-[1px] shadow-lg"></div>
+    <div className="absolute w-12 h-12 sm:w-16 sm:h-16 md:w-18 md:h-18 bg-blue-200/80 rounded-2xl sm:rounded-[18px] translate-y-[3px] sm:translate-y-[4px] translate-x-[1px] shadow-lg"></div>
 
     {/* Front Plate (Main Body) */}
-    <div className="absolute w-18 h-18 bg-gradient-to-br from-white via-blue-50 to-blue-100 rounded-[18px] border-t border-l border-white flex items-center justify-center shadow-[inset_0_1px_2px_rgba(255,255,255,1)]">
-      <svg className="w-9 h-9 text-[#2563EB] drop-shadow-[0_1.5px_2px_rgba(37,99,235,0.25)]" viewBox="0 0 24 24" fill="currentColor">
+    <div className="absolute w-12 h-12 sm:w-16 sm:h-16 md:w-18 md:h-18 bg-gradient-to-br from-white via-blue-50 to-blue-100 rounded-2xl sm:rounded-[18px] border-t border-l border-white flex items-center justify-center shadow-[inset_0_1px_2px_rgba(255,255,255,1)]">
+      <svg className="w-6 h-6 sm:w-8 sm:h-8 md:w-9 md:h-9 text-[#2563EB] drop-shadow-[0_1.5px_2px_rgba(37,99,235,0.25)]" viewBox="0 0 24 24" fill="currentColor">
         <path d="M13 2v9h7L11 22v-9H4L13 2z" />
       </svg>
     </div>
@@ -43,26 +43,26 @@ const ThreeDLightningIcon = () => (
 );
 
 const ThreeDFolderIcon = () => (
-  <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
+  <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 flex items-center justify-center shrink-0">
     {/* Drop shadow */}
-    <div className="absolute w-20 h-16 bg-blue-950/10 rounded-lg translate-y-4 translate-x-1 blur-md"></div>
+    <div className="absolute w-14 h-12 sm:w-18 sm:h-14 md:w-20 md:h-16 bg-blue-950/10 rounded-lg translate-y-3 sm:translate-y-4 translate-x-1 blur-md"></div>
 
     {/* Back folder plate */}
-    <div className="absolute w-14 h-18 bg-blue-600 rounded-lg transform -rotate-6 translate-y-0.5 -translate-x-0.5 shadow-sm"></div>
+    <div className="absolute w-10 h-13 sm:w-12 sm:h-16 md:w-14 md:h-18 bg-blue-600 rounded-lg transform -rotate-6 translate-y-0.5 -translate-x-0.5 shadow-sm"></div>
 
     {/* Pages sticking out */}
-    <div className="absolute w-14 h-18 bg-white rounded-md border border-blue-100 shadow-xs flex flex-col p-2 gap-1 transform rotate-3 -translate-y-1.5">
-      <div className="w-5 h-0.5 bg-blue-500 rounded-full"></div>
-      <div className="w-10 h-0.5 bg-blue-300/80 rounded-full"></div>
-      <div className="w-8 h-0.5 bg-blue-300/80 rounded-full"></div>
-      <div className="w-9 h-0.5 bg-blue-300/80 rounded-full"></div>
-      <div className="w-6 h-0.5 bg-blue-300/80 rounded-full"></div>
+    <div className="absolute w-10 h-13 sm:w-12 sm:h-16 md:w-14 md:h-18 bg-white rounded-md border border-blue-100 shadow-xs flex flex-col p-1.5 sm:p-2 gap-1 transform rotate-3 -translate-y-1 sm:-translate-y-1.5">
+      <div className="w-4 sm:w-5 h-0.5 bg-blue-500 rounded-full"></div>
+      <div className="w-7 sm:w-10 h-0.5 bg-blue-300/80 rounded-full"></div>
+      <div className="w-5 sm:w-8 h-0.5 bg-blue-300/80 rounded-full"></div>
+      <div className="w-6 sm:w-9 h-0.5 bg-blue-300/80 rounded-full"></div>
+      <div className="w-4 sm:w-6 h-0.5 bg-blue-300/80 rounded-full"></div>
     </div>
 
     {/* Front folder plate (rotated/open) */}
-    <div className="absolute w-16 h-16 bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-500 rounded-lg border-t border-l border-white/50 shadow-md transform rotate-12 translate-y-2.5 translate-x-1.5 flex items-end p-1.5">
+    <div className="absolute w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-500 rounded-lg border-t border-l border-white/50 shadow-md transform rotate-12 translate-y-2 sm:translate-y-2.5 translate-x-1 sm:translate-x-1.5 flex items-end p-1 sm:p-1.5">
       {/* Tab/Label on front folder */}
-      <div className="w-5 h-1.5 bg-blue-200/50 rounded-xs"></div>
+      <div className="w-4 sm:w-5 h-1 sm:h-1.5 bg-blue-200/50 rounded-xs"></div>
     </div>
   </div>
 );
@@ -74,48 +74,48 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full bg-[#FAFAFC]">
       {/* Hero Section (Section 0) */}
-      <section className="w-full min-h-[calc(100vh-96px)] px-4 md:px-8 text-center relative overflow-hidden flex flex-col justify-between items-center bg-[#FAFAFC]">
+      <section className="w-full min-h-[calc(100vh-80px)] px-4 sm:px-6 md:px-8 text-center relative overflow-hidden flex flex-col justify-between items-center bg-[#FAFAFC] pt-6 sm:pt-10 md:pt-14 pb-8 sm:pb-12">
         {/* Background Dotted Wave Component */}
         <DottedWave />
 
         {/* Top/Middle Main Content Container */}
-        <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-center justify-center flex-1 w-full pt-1 sm:pt-2">
-          {/* Title & Subtitle Block - Shifted further upward */}
-          <div className="flex flex-col items-center text-center -translate-y-5 sm:-translate-y-8 md:-translate-y-12">
-            <h1 className="text-[23px] min-[360px]:text-[26px] sm:text-4xl md:text-5xl lg:text-[54px] font-extrabold text-[#0B1C3F] tracking-tight leading-[1.28] sm:leading-[1.18] mb-2.5 sm:mb-3 px-1">
+        <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-center justify-center flex-1 w-full">
+          {/* Title & Subtitle Block */}
+          <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
+            <h1 className="text-2xl min-[360px]:text-[28px] sm:text-4xl md:text-5xl lg:text-[54px] font-extrabold text-[#0B1C3F] tracking-normal sm:tracking-tight leading-snug sm:leading-[1.18] mb-3 sm:mb-4 px-2">
               <span className="block">{t.hero.headingLine1}</span>
               <span className="block mt-1 sm:mt-2 text-[#2563EB]">
                 {t.hero.headingLine2}
               </span>
             </h1>
-            <p className="text-xs min-[360px]:text-sm sm:text-base md:text-lg text-slate-600 font-medium mb-3 sm:mb-4 max-w-2xl px-2">
+            <p className="text-xs min-[360px]:text-sm sm:text-base md:text-lg text-slate-600 font-medium mb-4 sm:mb-5 max-w-2xl px-3 leading-relaxed">
               {t.hero.subtitle}
             </p>
 
             {/* Minimal Single Thin Line Separator */}
-            <div className="w-12 h-[1.5px] bg-[#2563EB]/40 rounded-full"></div>
+            <div className="w-12 h-[2px] bg-[#2563EB]/40 rounded-full"></div>
           </div>
 
-          {/* Dual Action Cards Container (Shifted up by 5% with Breathable Margin from Title) */}
-          <div className="w-full max-w-5xl xl:max-w-6xl mx-auto mt-6 sm:mt-8 md:mt-9 -translate-y-1 sm:-translate-y-2 md:-translate-y-3 flex justify-center">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-stretch w-full">
-              {/* Card 1: Flash RTI - Solid Theme Primary Blue Fill */}
-              <div className="group relative bg-[#2563EB] text-white rounded-3xl border border-blue-400/40 hover:border-blue-300/70 shadow-xl shadow-blue-600/20 hover:shadow-2xl hover:shadow-blue-600/30 transition-all duration-300 p-6 sm:p-8 flex flex-col justify-between text-left overflow-hidden">
+          {/* Dual Action Cards Container */}
+          <div className="w-full max-w-5xl xl:max-w-6xl mx-auto mt-6 sm:mt-10 md:mt-12 flex justify-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-7 lg:gap-8 items-stretch w-full">
+              {/* Card 1: Flash RTI */}
+              <div className="group relative bg-[#2563EB] text-white rounded-2xl sm:rounded-3xl border border-blue-400/40 hover:border-blue-300/70 shadow-lg sm:shadow-xl shadow-blue-600/20 hover:shadow-2xl hover:shadow-blue-600/30 transition-all duration-300 p-5 sm:p-7 md:p-8 flex flex-col justify-between text-left overflow-hidden">
                 <div className="relative z-10 flex flex-col flex-1">
                   {/* Content columns */}
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-start">
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 sm:gap-6 items-start">
                     {/* Left Column: Icon + Title Block Row, and Description */}
                     <div className="sm:col-span-7 flex flex-col items-start text-left">
                       {/* Header Row: Icon + Title Block */}
-                      <div className="flex items-center gap-4 mb-5 w-full">
+                      <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5 w-full">
                         <ThreeDLightningIcon />
-                        <div className="flex flex-col items-start">
+                        <div className="flex flex-col items-start min-w-0">
                           {t.mainActions.getInformation.badge && (
                             <span className="inline-flex items-center px-2 py-0.5 rounded bg-white/20 backdrop-blur-xs border border-white/30 text-white text-[10px] font-bold tracking-wider mb-1 uppercase">
                               {t.mainActions.getInformation.badge}
                             </span>
                           )}
-                          <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight leading-tight">
+                          <h3 className="text-lg sm:text-xl md:text-2xl font-extrabold text-white tracking-tight leading-tight">
                             {t.mainActions.getInformation.title}
                           </h3>
                           <span className="text-xs sm:text-sm font-semibold text-blue-100 mt-0.5">
@@ -130,16 +130,16 @@ export default function Home() {
                     </div>
 
                     {/* Right Column: Features checklist */}
-                    <div className="sm:col-span-5 flex flex-col gap-3.5 self-center justify-center pt-2 sm:pt-6 pl-0 sm:pl-4">
+                    <div className="sm:col-span-5 flex flex-col gap-3 sm:gap-3.5 self-start sm:self-center justify-center pt-2 sm:pt-6 pl-0 sm:pl-4">
                       {t.mainActions.getInformation.features.map((feat, idx) => {
                         const icons = [
-                          <Search key="f1" className="w-5 h-5 text-white" strokeWidth={2.5} />,
-                          <Landmark key="f2" className="w-5 h-5 text-white" strokeWidth={2.2} />,
-                          <Zap key="f3" className="w-5 h-5 text-white" fill="currentColor" strokeWidth={1} />,
-                          <ShieldCheckIcon key="f4" className="w-5 h-5 text-white" strokeWidth={2} />
+                          <Search key="f1" className="w-4 h-4 sm:w-5 sm:h-5 text-white shrink-0" strokeWidth={2.5} />,
+                          <Landmark key="f2" className="w-4 h-4 sm:w-5 sm:h-5 text-white shrink-0" strokeWidth={2.2} />,
+                          <Zap key="f3" className="w-4 h-4 sm:w-5 sm:h-5 text-white shrink-0" fill="currentColor" strokeWidth={1} />,
+                          <ShieldCheckIcon key="f4" className="w-4 h-4 sm:w-5 sm:h-5 text-white shrink-0" strokeWidth={2} />
                         ];
                         return (
-                          <div key={idx} className="flex items-center gap-3 text-xs sm:text-sm text-white font-semibold">
+                          <div key={idx} className="flex items-center gap-2.5 sm:gap-3 text-xs sm:text-sm text-white font-semibold">
                             <div className="shrink-0">
                               {icons[idx]}
                             </div>
@@ -151,36 +151,36 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Bottom CTA & Footnote (No top border) */}
-                <div className="relative z-10 mt-6 flex items-center justify-between gap-4">
+                {/* Bottom CTA & Footnote */}
+                <div className="relative z-10 mt-6 pt-2 flex flex-col min-[420px]:flex-row items-stretch min-[420px]:items-center justify-between gap-3 sm:gap-4">
                   <Link
                     href="/dashboard/flash-rti"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-xs sm:text-sm text-[#2563EB] bg-white hover:bg-blue-50 shadow-md shadow-blue-950/20 hover:shadow-lg transition-all duration-200 cursor-pointer group/btn whitespace-nowrap"
+                    className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm text-[#2563EB] bg-white hover:bg-blue-50 shadow-md shadow-blue-950/20 hover:shadow-lg transition-all duration-200 cursor-pointer group/btn whitespace-nowrap active:scale-[0.98]"
                   >
                     <span>{t.mainActions.getInformation.btn}</span>
                     <ArrowRight className="w-4 h-4 text-[#2563EB] transition-transform duration-200 group-hover/btn:translate-x-1" />
                   </Link>
-                  <div className="flex items-center gap-1.5 text-xs text-blue-100 font-semibold">
-                    <Lock className="w-3.5 h-3.5 text-blue-200" />
+                  <div className="flex items-center justify-center min-[420px]:justify-start gap-1.5 text-xs text-blue-100 font-semibold">
+                    <Lock className="w-3.5 h-3.5 text-blue-200 shrink-0" />
                     <span>{t.mainActions.getInformation.note}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Card 2: File an RTI - Light Shade Tonal Fill in Theme Blue (No Orange) */}
-              <div className="group relative bg-[#EEF4FE]/80 backdrop-blur-sm rounded-3xl border border-blue-200/80 hover:border-blue-400/90 shadow-lg shadow-blue-950/5 hover:shadow-xl hover:shadow-blue-950/10 transition-all duration-300 p-6 sm:p-8 flex flex-col justify-between text-left overflow-hidden">
+              {/* Card 2: File an RTI */}
+              <div className="group relative bg-[#EEF4FE]/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-blue-200/80 hover:border-blue-400/90 shadow-md sm:shadow-lg shadow-blue-950/5 hover:shadow-xl hover:shadow-blue-950/10 transition-all duration-300 p-5 sm:p-7 md:p-8 flex flex-col justify-between text-left overflow-hidden">
                 <div className="relative z-10 flex flex-col flex-1">
                   {/* Content columns */}
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-start">
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 sm:gap-6 items-start">
                     {/* Left Column: Icon + Title Block Row, and Description */}
                     <div className="sm:col-span-7 flex flex-col items-start text-left">
                       {/* Header Row: Icon + Title Block */}
-                      <div className="flex items-center gap-4 mb-5 w-full">
+                      <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5 w-full">
                         <ThreeDFolderIcon />
-                        <div className="flex flex-col items-start">
-                          {/* Empty badge height filler to match left card alignment */}
-                          <div className="h-[21px] mb-1"></div>
-                          <h3 className="text-xl sm:text-2xl font-extrabold text-[#0B1C3F] tracking-tight leading-tight">
+                        <div className="flex flex-col items-start min-w-0">
+                          {/* Hidden on mobile to avoid strange gap, only visible on larger screens */}
+                          <div className="hidden lg:block h-[21px] mb-1"></div>
+                          <h3 className="text-lg sm:text-xl md:text-2xl font-extrabold text-[#0B1C3F] tracking-tight leading-tight">
                             {t.mainActions.fileRTI.title}
                           </h3>
                           <span className="text-xs sm:text-sm font-semibold text-slate-500 mt-0.5">
@@ -195,16 +195,16 @@ export default function Home() {
                     </div>
 
                     {/* Right Column: Features checklist */}
-                    <div className="sm:col-span-5 flex flex-col gap-3.5 self-center justify-center pt-2 sm:pt-6 pl-0 sm:pl-4">
+                    <div className="sm:col-span-5 flex flex-col gap-3 sm:gap-3.5 self-start sm:self-center justify-center pt-2 sm:pt-6 pl-0 sm:pl-4">
                       {t.mainActions.fileRTI.features.map((feat, idx) => {
                         const icons = [
-                          <ShieldCheckIcon key="r1" className="w-5 h-5 text-[#2563EB]" strokeWidth={2} />,
-                          <Upload key="r2" className="w-5 h-5 text-[#2563EB]" strokeWidth={2.2} />,
-                          <Search key="r3" className="w-5 h-5 text-[#2563EB]" strokeWidth={2.5} />,
-                          <Calendar key="r4" className="w-5 h-5 text-[#2563EB]" strokeWidth={2} />
+                          <ShieldCheckIcon key="r1" className="w-4 h-4 sm:w-5 sm:h-5 text-[#2563EB]" strokeWidth={2} />,
+                          <Upload key="r2" className="w-4 h-4 sm:w-5 sm:h-5 text-[#2563EB]" strokeWidth={2.2} />,
+                          <Search key="r3" className="w-4 h-4 sm:w-5 sm:h-5 text-[#2563EB]" strokeWidth={2.5} />,
+                          <Calendar key="r4" className="w-4 h-4 sm:w-5 sm:h-5 text-[#2563EB]" strokeWidth={2} />
                         ];
                         return (
-                          <div key={idx} className="flex items-center gap-3 text-xs sm:text-sm text-slate-700 font-semibold">
+                          <div key={idx} className="flex items-center gap-2.5 sm:gap-3 text-xs sm:text-sm text-slate-700 font-semibold">
                             <div className="shrink-0">
                               {icons[idx]}
                             </div>
@@ -216,17 +216,17 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Bottom CTA & Footnote (No top border) */}
-                <div className="relative z-10 mt-6 flex items-center justify-between gap-4">
+                {/* Bottom CTA & Footnote */}
+                <div className="relative z-10 mt-6 pt-2 flex flex-col min-[420px]:flex-row items-stretch min-[420px]:items-center justify-between gap-3 sm:gap-4">
                   <Link
                     href="/dashboard/file-rti"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-xs sm:text-sm text-[#2563EB] bg-white hover:bg-blue-50/80 border border-blue-200 hover:border-blue-400 shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer group/btn whitespace-nowrap"
+                    className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm text-[#2563EB] bg-white hover:bg-blue-50/80 border border-blue-200 hover:border-blue-400 shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer group/btn whitespace-nowrap active:scale-[0.98]"
                   >
                     <span>{t.mainActions.fileRTI.btn}</span>
                     <ArrowRight className="w-4 h-4 text-[#2563EB] transition-transform duration-200 group-hover/btn:translate-x-1" />
                   </Link>
-                  <div className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold">
-                    <Lock className="w-3.5 h-3.5 text-slate-400" />
+                  <div className="flex items-center justify-center min-[420px]:justify-start gap-1.5 text-xs text-slate-500 font-semibold">
+                    <Lock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     <span>{t.mainActions.fileRTI.note}</span>
                   </div>
                 </div>
@@ -236,20 +236,20 @@ export default function Home() {
         </div>
 
         {/* Three Trust Icons Bar at the Very Bottom of Hero Section */}
-        <div className="relative z-10 w-full max-w-5xl xl:max-w-6xl mx-auto mt-auto pt-6 pb-6 sm:pb-8 border-t border-slate-200/60">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 w-full">
-            <div className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 font-semibold">
-              <ShieldCheckIcon className="w-5 h-5 text-blue-600" />
+        <div className="relative z-10 w-full max-w-5xl xl:max-w-6xl mx-auto mt-8 sm:mt-12 pt-5 sm:pt-6 pb-2 sm:pb-4 border-t border-slate-200/60">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-center gap-4 sm:gap-10 md:gap-12 w-full">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 font-semibold">
+              <ShieldCheckIcon className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 shrink-0" />
               <span>{t.trust.badges.secure}</span>
             </div>
-            <div className="hidden sm:block w-px h-6 bg-slate-200/80"></div>
-            <div className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 font-semibold">
-              <CheckCircle2 className="w-5 h-5 text-blue-600" strokeWidth={2.5} />
+            <div className="hidden sm:block w-px h-5 bg-slate-200/80"></div>
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 font-semibold">
+              <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 shrink-0" strokeWidth={2.5} />
               <span>{t.trust.badges.verified}</span>
             </div>
-            <div className="hidden sm:block w-px h-6 bg-slate-200/80"></div>
-            <div className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 font-semibold">
-              <Scale className="w-5 h-5 text-blue-600" />
+            <div className="hidden sm:block w-px h-5 bg-slate-200/80"></div>
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 font-semibold">
+              <Scale className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 shrink-0" />
               <span>{t.trust.badges.act}</span>
             </div>
           </div>
@@ -257,9 +257,9 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="w-full py-20 px-4 md:px-8 bg-white border-t border-slate-200/60">
+      <section className="w-full py-16 sm:py-20 px-4 md:px-8 bg-white border-t border-slate-200/60">
         <div className="max-w-5xl mx-auto text-center">
-          <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#0B1C3F] tracking-tight mb-16">
+          <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#0B1C3F] tracking-tight mb-12 sm:mb-16">
             {t.howItWorks.heading}
           </h3>
 
@@ -267,9 +267,9 @@ export default function Home() {
             
             {/* Step 1 */}
             <div className="flex flex-col items-center text-center flex-1 max-w-[260px] group cursor-default">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-b from-[#EDF5FD] via-[#F3F7FD] to-[#F8FAFC] border border-blue-200/80 flex items-center justify-center mb-6 shadow-xs group-hover:scale-105 group-hover:border-blue-300 group-hover:shadow-md transition-all duration-300 relative overflow-hidden">
+              <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-gradient-to-b from-[#EDF5FD] via-[#F3F7FD] to-[#F8FAFC] border border-blue-200/80 flex items-center justify-center mb-5 sm:mb-6 shadow-xs group-hover:scale-105 group-hover:border-blue-300 group-hover:shadow-md transition-all duration-300 relative overflow-hidden">
                 <DottedWave variant="icon" />
-                <SearchIcon className="w-10 h-10 sm:w-11 sm:h-11 text-[#0B1C3F] relative z-10" strokeWidth={1.75} />
+                <SearchIcon className="w-8 h-8 sm:w-11 sm:h-11 text-[#0B1C3F] relative z-10" strokeWidth={1.75} />
               </div>
               <h4 className="text-base sm:text-lg font-bold text-[#0B1C3F] mb-2 flex items-center justify-center gap-1.5">
                 <span>{t.howItWorks.step1Title}</span>
@@ -289,17 +289,17 @@ export default function Home() {
 
             {/* Mobile Vertical Connector 1 -> 2 */}
             <div className="flex md:hidden items-center justify-center my-1 text-slate-300">
-              <svg className="w-6 h-10" viewBox="0 0 24 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="12" y1="4" x2="124" y2="30" stroke="currentColor" strokeWidth="1.75" strokeDasharray="4 4" strokeLinecap="round" />
-                <path d="M6 24L12 31L18 24" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+              <svg className="w-6 h-8" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="12" y1="2" x2="12" y2="24" stroke="currentColor" strokeWidth="1.75" strokeDasharray="4 4" strokeLinecap="round" />
+                <path d="M6 18L12 25L18 18" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
 
             {/* Step 2 */}
             <div className="flex flex-col items-center text-center flex-1 max-w-[260px] group cursor-default">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-b from-[#EDF5FD] via-[#F3F7FD] to-[#F8FAFC] border border-blue-200/80 flex items-center justify-center mb-6 shadow-xs group-hover:scale-105 group-hover:border-blue-300 group-hover:shadow-md transition-all duration-300 relative overflow-hidden">
+              <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-gradient-to-b from-[#EDF5FD] via-[#F3F7FD] to-[#F8FAFC] border border-blue-200/80 flex items-center justify-center mb-5 sm:mb-6 shadow-xs group-hover:scale-105 group-hover:border-blue-300 group-hover:shadow-md transition-all duration-300 relative overflow-hidden">
                 <DottedWave variant="icon" />
-                <DocumentTextIcon className="w-10 h-10 sm:w-11 sm:h-11 text-[#0B1C3F] relative z-10" strokeWidth={1.75} />
+                <DocumentTextIcon className="w-8 h-8 sm:w-11 sm:h-11 text-[#0B1C3F] relative z-10" strokeWidth={1.75} />
               </div>
               <h4 className="text-base sm:text-lg font-bold text-[#0B1C3F] mb-2 flex items-center justify-center gap-1.5">
                 <span>{t.howItWorks.step2Title}</span>
@@ -319,17 +319,17 @@ export default function Home() {
 
             {/* Mobile Vertical Connector 2 -> 3 */}
             <div className="flex md:hidden items-center justify-center my-1 text-slate-300">
-              <svg className="w-6 h-10" viewBox="0 0 24 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="12" y1="4" x2="124" y2="30" stroke="currentColor" strokeWidth="1.75" strokeDasharray="4 4" strokeLinecap="round" />
-                <path d="M6 24L12 31L18 24" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+              <svg className="w-6 h-8" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="12" y1="2" x2="12" y2="24" stroke="currentColor" strokeWidth="1.75" strokeDasharray="4 4" strokeLinecap="round" />
+                <path d="M6 18L12 25L18 18" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
 
             {/* Step 3 */}
             <div className="flex flex-col items-center text-center flex-1 max-w-[260px] group cursor-default">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-b from-[#EDF5FD] via-[#F3F7FD] to-[#F8FAFC] border border-blue-200/80 flex items-center justify-center mb-6 shadow-xs group-hover:scale-105 group-hover:border-blue-300 group-hover:shadow-md transition-all duration-300 relative overflow-hidden">
+              <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-gradient-to-b from-[#EDF5FD] via-[#F3F7FD] to-[#F8FAFC] border border-blue-200/80 flex items-center justify-center mb-5 sm:mb-6 shadow-xs group-hover:scale-105 group-hover:border-blue-300 group-hover:shadow-md transition-all duration-300 relative overflow-hidden">
                 <DottedWave variant="icon" />
-                <DocumentCheckIcon className="w-10 h-10 sm:w-11 sm:h-11 text-[#0B1C3F] relative z-10" strokeWidth={1.75} />
+                <DocumentCheckIcon className="w-8 h-8 sm:w-11 sm:h-11 text-[#0B1C3F] relative z-10" strokeWidth={1.75} />
               </div>
               <h4 className="text-base sm:text-lg font-bold text-[#0B1C3F] mb-2 flex items-center justify-center gap-1.5">
                 <span>{t.howItWorks.step3Title}</span>

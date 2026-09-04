@@ -32,13 +32,16 @@ export default function GlobalKeyboardShortcuts() {
           e.stopImmediatePropagation();
         }
 
-        const currentPath = pathnameRef.current;
-        if (currentPath !== '/dashboard/flash-rti') {
-          routerRef.current.push('/dashboard/flash-rti');
+        if (typeof window !== 'undefined') {
+          window.sessionStorage.setItem('flash_rti_force_new', '1');
+          window.dispatchEvent(new CustomEvent('flash_rti_reset_search'));
         }
 
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('flash_rti_reset_search'));
+        const currentPath = pathnameRef.current;
+        if (currentPath !== '/dashboard/flash-rti') {
+          routerRef.current.push('/dashboard/flash-rti?new=' + Date.now());
+        } else {
+          routerRef.current.replace('/dashboard/flash-rti?new=' + Date.now());
         }
 
         // Reliably focus and select search input

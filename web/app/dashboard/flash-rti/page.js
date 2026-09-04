@@ -535,13 +535,18 @@ function FlashRTIContent() {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
-    processedParamRef.current = null;
+    processedParamRef.current = 'reset_' + Date.now();
     setSearchQuery('');
     setPipelineState('idle');
     setActiveResult(null);
     setErrorMessage(null);
     setSteps(INITIAL_STEPS);
-    router.push('/dashboard/flash-rti');
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.removeItem('flash_rti_force_new');
+      try {
+        window.history.replaceState(null, '', '/dashboard/flash-rti');
+      } catch (e) {}
+    }
     const focusInput = () => {
       if (searchInputRef.current) {
         searchInputRef.current.value = '';
@@ -552,7 +557,7 @@ function FlashRTIContent() {
     focusInput();
     setTimeout(focusInput, 50);
     setTimeout(focusInput, 150);
-  }, [router]);
+  }, []);
 
   // Natural pacing helper for authentic AI agent feel
   const minDelay = (ms) => new Promise(res => setTimeout(res, ms));
@@ -798,8 +803,17 @@ function FlashRTIContent() {
     };
   }, [handleReset]);
 
-  // Load history session when historyId is in URL, or trigger initial query
+  // Load history session when historyId is in URL, or trigger initial query, or handle forced new
   useEffect(() => {
+    const isForcedNew = typeof window !== 'undefined' && (
+      window.sessionStorage.getItem('flash_rti_force_new') === '1' ||
+      searchParams.get('new')
+    );
+    if (isForcedNew) {
+      handleReset();
+      return;
+    }
+
     if (historyIdParam && processedParamRef.current !== `history_${historyIdParam}`) {
       processedParamRef.current = `history_${historyIdParam}`;
       const loadHistorySession = async () => {
@@ -829,7 +843,7 @@ function FlashRTIContent() {
       processedParamRef.current = `query_${queryParam}`;
       startPipeline(queryParam);
     }
-  }, [historyIdParam, queryParam, startPipeline]);
+  }, [searchParams, historyIdParam, queryParam, startPipeline, handleReset]);
 
   useEffect(() => {
     return () => {

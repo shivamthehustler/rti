@@ -132,12 +132,23 @@ function DashboardLayoutContent({ children }) {
 
   const handleNewSearch = (e) => {
     if (e) e.stopPropagation();
-    if (pathnameRef.current !== '/dashboard/flash-rti') {
-      router.push('/dashboard/flash-rti?focus=1');
-    }
     if (typeof window !== "undefined") {
+      window.sessionStorage.setItem('flash_rti_force_new', '1');
       window.dispatchEvent(new CustomEvent('flash_rti_reset_search'));
     }
+    const currentPath = pathnameRef.current;
+    if (currentPath !== '/dashboard/flash-rti') {
+      routerRef.current.push('/dashboard/flash-rti?new=' + Date.now());
+    } else {
+      routerRef.current.replace('/dashboard/flash-rti?new=' + Date.now());
+    }
+    setTimeout(() => {
+      const searchInput = document.querySelector('input[data-search-input="true"]');
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    }, 50);
   };
 
   // High-performance single-registration Global Native Keyboard Engine (⌘⇧O, ⌘K, ⌘1-5, ?, Esc)
@@ -167,12 +178,16 @@ function DashboardLayoutContent({ children }) {
           e.stopImmediatePropagation();
         }
 
+        if (typeof window !== "undefined") {
+          window.sessionStorage.setItem('flash_rti_force_new', '1');
+          window.dispatchEvent(new CustomEvent('flash_rti_reset_search'));
+        }
+
         const currentPath = pathnameRef.current;
         if (currentPath !== '/dashboard/flash-rti') {
-          routerRef.current.push('/dashboard/flash-rti');
-        }
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent('flash_rti_reset_search'));
+          routerRef.current.push('/dashboard/flash-rti?new=' + Date.now());
+        } else {
+          routerRef.current.replace('/dashboard/flash-rti?new=' + Date.now());
         }
 
         setTimeout(() => {
