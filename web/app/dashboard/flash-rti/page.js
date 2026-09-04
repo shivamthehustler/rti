@@ -860,13 +860,22 @@ function FlashRTIContent() {
 
         if (typeof window !== "undefined") {
           try {
+            // 1. Update full dossier cache
             const cached = JSON.parse(localStorage.getItem('rti_flash_history_cached') || '[]');
-            const updated = [newHistItem, ...cached.filter(h => h.query?.toLowerCase() !== text.trim().toLowerCase())].slice(0, 50);
-            localStorage.setItem('rti_flash_history_cached', JSON.stringify(updated));
+            const updatedCached = [newHistItem, ...cached.filter(h => h.query?.toLowerCase() !== text.trim().toLowerCase())].slice(0, 50);
+            localStorage.setItem('rti_flash_history_cached', JSON.stringify(updatedCached));
+
+            // 2. Save to custom query registry for cross-tab sync
+            const customSearches = JSON.parse(localStorage.getItem('rti_flash_custom_searches') || '[]');
+            const updatedCustom = [newHistItem, ...customSearches.filter(h => h.query?.toLowerCase() !== text.trim().toLowerCase())].slice(0, 50);
+            localStorage.setItem('rti_flash_custom_searches', JSON.stringify(updatedCustom));
+
+            // 3. Broadcast cross-tab storage signal
+            localStorage.setItem('rti_flash_history_signal', String(Date.now()));
           } catch (e) {}
         }
 
-        await fetch("/api/history", {
+        const saveRes = await fetch("/api/history", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -877,6 +886,13 @@ function FlashRTIContent() {
             }
           })
         });
+
+        if (saveRes.ok) {
+          const savedData = await saveRes.json();
+          if (savedData?.entry?.id) {
+            newHistItem.id = savedData.entry.id;
+          }
+        }
 
         if (typeof window !== "undefined") {
           window.dispatchEvent(new CustomEvent("flash_rti_history_updated"));

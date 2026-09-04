@@ -51,12 +51,16 @@ function DashboardLayoutContent({ children }) {
   const pathnameRef = useRef(pathname);
   const routerRef = useRef(router);
   const isShortcutsOpenRef = useRef(isShortcutsOpen);
+  const historyListRef = useRef(historyList);
+  const activeHistoryIdRef = useRef(activeHistoryId);
 
   useEffect(() => {
     pathnameRef.current = pathname;
     routerRef.current = router;
     isShortcutsOpenRef.current = isShortcutsOpen;
-  }, [pathname, router, isShortcutsOpen]);
+    historyListRef.current = historyList;
+    activeHistoryIdRef.current = activeHistoryId;
+  }, [pathname, router, isShortcutsOpen, historyList, activeHistoryId]);
 
   // Instant Route Prefetching for 0ms transitions across all tabs
   useEffect(() => {
@@ -77,17 +81,31 @@ function DashboardLayoutContent({ children }) {
   }, [initUser]);
 
   const fetchHistory = useCallback(async () => {
+    let clientCustom = [];
+    if (typeof window !== "undefined") {
+      try {
+        clientCustom = JSON.parse(localStorage.getItem('rti_flash_custom_searches') || '[]');
+      } catch (e) {}
+    }
+
     try {
       const res = await fetch('/api/history');
       if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setHistoryList(data);
+        const serverData = await res.json();
+        if (Array.isArray(serverData)) {
+          // Merge client-side custom searches with server queries so no manual query is EVER lost
+          const combined = [
+            ...clientCustom,
+            ...serverData.filter(s => !clientCustom.some(c => c.query?.toLowerCase() === s.query?.toLowerCase()))
+          ].slice(0, 50);
+
+          setHistoryList(combined);
+
           if (typeof window !== "undefined") {
             try {
               const existingCached = JSON.parse(localStorage.getItem('rti_flash_history_cached') || '[]');
-              const merged = data.map(item => {
-                const existing = existingCached.find(e => String(e.id) === String(item.id));
+              const merged = combined.map(item => {
+                const existing = existingCached.find(e => String(e.id) === String(item.id) || e.query?.toLowerCase() === item.query?.toLowerCase());
                 return existing && existing.data ? { ...item, data: existing.data } : item;
               });
               localStorage.setItem('rti_flash_history_cached', JSON.stringify(merged));
@@ -121,9 +139,17 @@ function DashboardLayoutContent({ children }) {
       fetchHistory();
     };
 
+    const handleStorageEvent = (e) => {
+      if (e.key === 'rti_flash_history_signal' || e.key === 'rti_flash_custom_searches' || e.key === 'rti_flash_history_cached') {
+        fetchHistory();
+      }
+    };
+
     window.addEventListener('flash_rti_history_updated', handleHistoryUpdate);
+    window.addEventListener('storage', handleStorageEvent);
     return () => {
       window.removeEventListener('flash_rti_history_updated', handleHistoryUpdate);
+      window.removeEventListener('storage', handleStorageEvent);
     };
   }, [fetchHistory]);
 
@@ -259,6 +285,62 @@ function DashboardLayoutContent({ children }) {
           }
           return;
         }
+      }
+
+      // Option + Up / Option + Down (or Alt + Up / Alt + Down) -> Navigate Recent Query History
+      if (isAlt && !isMod && (e.key === 'ArrowUp' || e.code === 'ArrowUp' || e.key === 'ArrowDown' || e.code === 'ArrowDown')) {
+        const list = historyListRef.current;
+        if (Array.isArray(list) && list.length > 0) {
+          e.preventDefault();
+          e.stopPropagation();
+          const currentId = activeHistoryIdRef.current;
+          const currentIndex = list.findIndex(h => String(h.id) === String(currentId));
+          const isDown = e.key === 'ArrowDown' || e.code === 'ArrowDown';
+          let targetIndex;
+          if (isDown) {
+            targetIndex = currentIndex === -1 ? 0 : Math.min(list.length - 1, currentIndex + 1);
+          } else {
+            targetIndex = currentIndex === -1 ? 0 : Math.max(0, currentIndex - 1);
+          }
+          const targetItem = list[targetIndex];
+          if (targetItem) {
+            routerRef.current.push(`/dashboard/flash-rti?historyId=${targetItem.id}`);
+          }
+          return;
+        }
+      }
+
+      // Option + P (or Alt + P) -> Profile
+      const isKeyP = (typeof e.key === 'string' && (e.key.toLowerCase() === 'p' || e.key === 'π')) || e.code === 'KeyP';
+      if (isAlt && !isMod && !e.shiftKey && isKeyP) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (pathnameRef.current !== '/dashboard/profile') {
+          routerRef.current.push('/dashboard/profile');
+        }
+        return;
+      }
+
+      // Option + N (or Alt + N) -> Notifications
+      const isKeyN = (typeof e.key === 'string' && (e.key.toLowerCase() === 'n' || e.key === '˜')) || e.code === 'KeyN';
+      if (isAlt && !isMod && !e.shiftKey && isKeyN) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (pathnameRef.current !== '/dashboard/notifications') {
+          routerRef.current.push('/dashboard/notifications');
+        }
+        return;
+      }
+
+      // Option + H (or Alt + H) -> Help and Support
+      const isKeyH = (typeof e.key === 'string' && (e.key.toLowerCase() === 'h' || e.key === '˙')) || e.code === 'KeyH';
+      if (isAlt && !isMod && !e.shiftKey && isKeyH) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (pathnameRef.current !== '/dashboard/help') {
+          routerRef.current.push('/dashboard/help');
+        }
+        return;
       }
 
       // ? or Shift+/ -> Toggle Keyboard Shortcuts Modal
@@ -883,6 +965,22 @@ function DashboardLayoutContent({ children }) {
                   <div className="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-white/5">
                     <span>Track Request</span>
                     <kbd className="px-2 py-0.5 rounded bg-slate-800 text-white font-mono text-[11px] border border-slate-700">⌘ 5</kbd>
+                  </div>
+                  <div className="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-white/5">
+                    <span>Navigate Recent History</span>
+                    <kbd className="px-2 py-0.5 rounded bg-slate-800 text-white font-mono text-[11px] border border-slate-700">⌥ ↑ / ↓</kbd>
+                  </div>
+                  <div className="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-white/5">
+                    <span>My Profile</span>
+                    <kbd className="px-2 py-0.5 rounded bg-slate-800 text-white font-mono text-[11px] border border-slate-700">⌥ P</kbd>
+                  </div>
+                  <div className="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-white/5">
+                    <span>Notifications</span>
+                    <kbd className="px-2 py-0.5 rounded bg-slate-800 text-white font-mono text-[11px] border border-slate-700">⌥ N</kbd>
+                  </div>
+                  <div className="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-white/5">
+                    <span>Help & Support</span>
+                    <kbd className="px-2 py-0.5 rounded bg-slate-800 text-white font-mono text-[11px] border border-slate-700">⌥ H</kbd>
                   </div>
                 </div>
               </div>

@@ -94,6 +94,39 @@ export default function GlobalKeyboardShortcuts() {
         setTimeout(triggerFocus, 150);
         return;
       }
+
+      // Option + P (or Alt + P) -> Profile
+      const isKeyP = (typeof e.key === 'string' && (e.key.toLowerCase() === 'p' || e.key === 'π')) || e.code === 'KeyP';
+      if (e.altKey && !isMod && !isShift && isKeyP) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (pathnameRef.current !== '/dashboard/profile') {
+          routerRef.current.push('/dashboard/profile');
+        }
+        return;
+      }
+
+      // Option + N (or Alt + N) -> Notifications
+      const isKeyN = (typeof e.key === 'string' && (e.key.toLowerCase() === 'n' || e.key === '˜')) || e.code === 'KeyN';
+      if (e.altKey && !isMod && !isShift && isKeyN) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (pathnameRef.current !== '/dashboard/notifications') {
+          routerRef.current.push('/dashboard/notifications');
+        }
+        return;
+      }
+
+      // Option + H (or Alt + H) -> Help and Support
+      const isKeyH = (typeof e.key === 'string' && (e.key.toLowerCase() === 'h' || e.key === '˙')) || e.code === 'KeyH';
+      if (e.altKey && !isMod && !isShift && isKeyH) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (pathnameRef.current !== '/dashboard/help') {
+          routerRef.current.push('/dashboard/help');
+        }
+        return;
+      }
     };
 
     // Use capturing phase (true) so the browser Bookmark Manager or other handlers are intercepted first

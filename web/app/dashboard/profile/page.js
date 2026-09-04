@@ -7,19 +7,12 @@ import ModernAvatar from '../../../components/ModernAvatar';
 import { 
   UserCircle, 
   ShieldCheck, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Lock, 
   CheckCircle2, 
-  Key, 
-  Smartphone,
-  Calendar,
-  Globe,
   Award,
   Sparkles,
-  Camera,
-  Check
+  Check,
+  Smile,
+  Layers
 } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -29,35 +22,103 @@ export default function ProfilePage() {
   const userEmail = user?.email || 'citizen.rti@gov.in';
   const userAvatar = user?.avatar || '/avatars/avatar-shivam.jpg';
 
+  const [activeTab, setActiveTab] = useState('characters'); // 'characters' | 'icons'
   const [mobile, setMobile] = useState('+91 98765 43210');
   const [state, setState] = useState('Maharashtra');
   const [address, setAddress] = useState('Flat 402, Shanti Heights, Shivajinagar, Pune - 411005');
   const [isSaved, setIsSaved] = useState(false);
 
-  const avatarOptions = [
+  const characterAvatarOptions = [
     {
       id: 'shivam',
-      name: 'Shivam (Cyber Tech)',
-      role: 'Tech Citizen Applicant',
+      name: 'Shivam',
+      role: 'General Citizen Applicant',
       src: '/avatars/avatar-shivam.jpg',
-      tag: 'Current Default',
-      glow: 'from-blue-600 to-cyan-500'
+      tag: 'Default Citizen',
+      bgDescription: 'Plain soft pastel blue'
     },
     {
       id: 'ananya',
-      name: 'Ananya (Civic Lead)',
-      role: 'Legal & Public Advocate',
+      name: 'Ananya',
+      role: 'Legal & Civic Advocate',
       src: '/avatars/avatar-ananya.jpg',
-      tag: 'Civic Specialist',
-      glow: 'from-indigo-600 to-purple-500'
+      tag: 'Advocate',
+      bgDescription: 'Plain warm cream beige'
     },
     {
-      id: 'tech',
-      name: 'Aryan (Modern Pro)',
-      role: 'Corporate RTI Lead',
-      src: '/avatars/avatar-tech.jpg',
-      tag: 'Executive',
-      glow: 'from-blue-700 to-indigo-600'
+      id: 'aryan',
+      name: 'Aryan',
+      role: 'Research & Policy Analyst',
+      src: '/avatars/avatar-aryan.jpg',
+      tag: 'Policy Analyst',
+      bgDescription: 'Plain soft neutral grey'
+    },
+    {
+      id: 'priya',
+      name: 'Priya',
+      role: 'Student & Youth Citizen',
+      src: '/avatars/avatar-priya.jpg',
+      tag: 'Student / Youth',
+      bgDescription: 'Plain soft studio grey'
+    },
+    {
+      id: 'rajesh',
+      name: 'Rajesh',
+      role: 'Senior Citizen & Pensioner',
+      src: '/avatars/avatar-rajesh.jpg',
+      tag: 'Senior Citizen',
+      bgDescription: 'Plain soft sky blue'
+    }
+  ];
+
+  const iconAvatarOptions = [
+    {
+      id: 'icon-user',
+      name: 'Citizen Profile',
+      role: 'Standard Citizen Icon',
+      src: 'icon:user',
+      tag: 'Clean Icon',
+      bgDescription: 'Solid pastel blue'
+    },
+    {
+      id: 'icon-shield',
+      name: 'Verified Citizen',
+      role: 'Official Shield Badge',
+      src: 'icon:shield',
+      tag: 'Emblem Icon',
+      bgDescription: 'Solid emerald green'
+    },
+    {
+      id: 'icon-scale',
+      name: 'Legal & Advocacy',
+      role: 'Justice & Transparency',
+      src: 'icon:scale',
+      tag: 'Advocacy Icon',
+      bgDescription: 'Solid indigo'
+    },
+    {
+      id: 'icon-student',
+      name: 'Scholar / Student',
+      role: 'Academic & Youth',
+      src: 'icon:student',
+      tag: 'Education Icon',
+      bgDescription: 'Solid warm amber'
+    },
+    {
+      id: 'icon-gov',
+      name: 'Civic Authority',
+      role: 'Institutional Liaison',
+      src: 'icon:gov',
+      tag: 'Institutional',
+      bgDescription: 'Solid neutral slate'
+    },
+    {
+      id: 'avatar-icon-3d',
+      name: '3D Clay Emblem',
+      role: 'Minimalist 3D Figure',
+      src: '/avatars/avatar-icon.jpg',
+      tag: '3D Emblem',
+      bgDescription: 'Plain off-white studio'
     }
   ];
 
@@ -95,7 +156,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* 3D-Styled Citizen ID Card */}
+        {/* Citizen ID Card */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -114,7 +175,7 @@ export default function ProfilePage() {
                 size="lg"
                 showBadge={true}
                 status="verified"
-                className="ring-4 ring-white/20 shadow-2xl"
+                className="ring-4 ring-white/30 shadow-lg"
               />
               <div>
                 <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight">{userName}</h2>
@@ -146,71 +207,151 @@ export default function ProfilePage() {
           </div>
         </motion.div>
 
-        {/* 3D Modern Avatar Persona Selector */}
-        <div className="bg-white/95 backdrop-blur-xs p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+        {/* Avatar Persona Selector (Friendly 3D Characters & Clean Icon Forms) */}
+        <div className="bg-white/95 backdrop-blur-xs p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
             <div>
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-blue-600" />
-                <h2 className="text-lg font-bold text-[#0B192C]">Modern 3D Citizen Avatar</h2>
+                <Smile className="w-5 h-5 text-blue-600" />
+                <h2 className="text-lg font-bold text-[#0B192C]">Citizen Profile Avatar</h2>
               </div>
               <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                Choose your official high-fidelity 3D profile persona for statutory portal interactions.
+                Choose a pleasant 3D character or simple icon form with a clean, plain background.
               </p>
             </div>
-            <span className="text-xs font-semibold px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-full w-fit">
-              DigiLocker Verified Graphic
-            </span>
+
+            {/* Tab switch between 3D Characters and Clean Icons */}
+            <div className="flex items-center p-1 bg-slate-100/90 rounded-2xl border border-slate-200/70 self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setActiveTab('characters')}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'characters'
+                    ? 'bg-white text-blue-600 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Smile className="w-3.5 h-3.5" />
+                <span>3D Characters</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('icons')}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === 'icons'
+                    ? 'bg-white text-blue-600 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>Clean Icons</span>
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-            {avatarOptions.map((option) => {
-              const isSelected = userAvatar === option.src;
-              return (
-                <div
-                  key={option.id}
-                  onClick={() => setAvatar && setAvatar(option.src)}
-                  className={`p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer relative flex flex-col items-center text-center gap-3 group ${
-                    isSelected
-                      ? 'border-blue-600 bg-blue-50/60 shadow-lg shadow-blue-500/10'
-                      : 'border-slate-200 hover:border-blue-300 hover:bg-slate-50/60'
-                  }`}
-                >
-                  {isSelected && (
-                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-sm">
-                      <Check className="w-3.5 h-3.5 stroke-[3]" />
-                    </div>
-                  )}
-
-                  <ModernAvatar
-                    src={option.src}
-                    name={option.name}
-                    size="lg"
-                    showBadge={true}
-                    status="verified"
-                    className="shadow-xl group-hover:scale-105 transition-transform"
-                  />
-
-                  <div className="space-y-1">
-                    <p className="font-bold text-slate-900 text-sm group-hover:text-blue-600 transition-colors">
-                      {option.name}
-                    </p>
-                    <p className="text-[11px] text-slate-500 font-medium">{option.role}</p>
-                  </div>
-
-                  <span
-                    className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+          {/* Grid for 3D Characters */}
+          {activeTab === 'characters' && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 pt-1">
+              {characterAvatarOptions.map((option) => {
+                const isSelected = userAvatar === option.src;
+                return (
+                  <div
+                    key={option.id}
+                    onClick={() => setAvatar && setAvatar(option.src)}
+                    className={`p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer relative flex flex-col items-center text-center gap-3 group ${
                       isSelected
-                        ? 'bg-blue-600 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-600 group-hover:bg-blue-100 group-hover:text-blue-700'
+                        ? 'border-blue-600 bg-blue-50/70 shadow-sm'
+                        : 'border-slate-200/90 hover:border-blue-300 hover:bg-slate-50/70'
                     }`}
                   >
-                    {isSelected ? 'Active Persona' : 'Select Persona'}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                    {isSelected && (
+                      <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs">
+                        <Check className="w-3 h-3 stroke-[3]" />
+                      </div>
+                    )}
+
+                    <ModernAvatar
+                      src={option.src}
+                      name={option.name}
+                      size="lg"
+                      showBadge={true}
+                      status="verified"
+                      className="shadow-xs group-hover:scale-105 transition-transform"
+                    />
+
+                    <div className="space-y-0.5">
+                      <p className="font-bold text-slate-900 text-sm group-hover:text-blue-600 transition-colors">
+                        {option.name}
+                      </p>
+                      <p className="text-[11px] text-slate-500 font-medium leading-tight">{option.role}</p>
+                    </div>
+
+                    <span
+                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full mt-auto ${
+                        isSelected
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-600 group-hover:bg-blue-100 group-hover:text-blue-700'
+                      }`}
+                    >
+                      {isSelected ? 'Active' : 'Select'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Grid for Clean Icons */}
+          {activeTab === 'icons' && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 pt-1">
+              {iconAvatarOptions.map((option) => {
+                const isSelected = userAvatar === option.src;
+                return (
+                  <div
+                    key={option.id}
+                    onClick={() => setAvatar && setAvatar(option.src)}
+                    className={`p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer relative flex flex-col items-center text-center gap-3 group ${
+                      isSelected
+                        ? 'border-blue-600 bg-blue-50/70 shadow-sm'
+                        : 'border-slate-200/90 hover:border-blue-300 hover:bg-slate-50/70'
+                    }`}
+                  >
+                    {isSelected && (
+                      <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs">
+                        <Check className="w-3 h-3 stroke-[3]" />
+                      </div>
+                    )}
+
+                    <ModernAvatar
+                      src={option.src}
+                      name={option.name}
+                      size="lg"
+                      showBadge={true}
+                      status="verified"
+                      className="shadow-xs group-hover:scale-105 transition-transform"
+                    />
+
+                    <div className="space-y-0.5">
+                      <p className="font-bold text-slate-900 text-xs group-hover:text-blue-600 transition-colors">
+                        {option.name}
+                      </p>
+                      <p className="text-[10.5px] text-slate-500 font-medium leading-tight">{option.role}</p>
+                    </div>
+
+                    <span
+                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full mt-auto ${
+                        isSelected
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-600 group-hover:bg-blue-100 group-hover:text-blue-700'
+                      }`}
+                    >
+                      {isSelected ? 'Active' : 'Select'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Profile Details Form */}
