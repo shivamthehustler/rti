@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import CustomScrollbar from "../components/CustomScrollbar";
 import GlobalKeyboardShortcuts from "../components/GlobalKeyboardShortcuts";
 import PageTitleManager from "../components/PageTitleManager";
+import InstallAppModal from "../components/InstallAppModal";
 import { AppProvider } from "../context/AppContext";
 
 const geistSans = Geist({
@@ -49,6 +50,7 @@ export const metadata = {
     shortcut: "/favicon.ico",
     apple: "/logo.png",
   },
+  manifest: "/manifest.json",
   openGraph: {
     title: "RTI Information Access Portal | Government of India",
     description:
@@ -86,6 +88,7 @@ export default function RootLayout({ children }) {
           <PageTitleManager />
           <GlobalKeyboardShortcuts />
           <CustomScrollbar />
+          <InstallAppModal />
           <Header />
           <main className="flex-1 flex flex-col">{children}</main>
           <Footer />

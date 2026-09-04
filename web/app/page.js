@@ -83,8 +83,8 @@ export default function Home() {
           {/* Title & Subtitle Block */}
           <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
             <h1 className="text-[23px] min-[360px]:text-[26px] sm:text-4xl md:text-5xl lg:text-[54px] font-semibold text-[#0B1C3F] tracking-tight leading-[1.28] sm:leading-[1.18] mb-2.5 sm:mb-3 px-1">
-              <span className="block font-medium sm:font-semibold">{t.hero.headingLine1}</span>
-              <span className="block mt-1 sm:mt-2 text-[#2563EB] font-medium sm:font-semibold whitespace-normal sm:whitespace-nowrap">
+              <span className="block font-semibold">{t.hero.headingLine1}</span>
+              <span className="block mt-1 sm:mt-2 text-[#2563EB] font-semibold whitespace-normal sm:whitespace-nowrap">
                 {t.hero.headingLine2}
               </span>
             </h1>

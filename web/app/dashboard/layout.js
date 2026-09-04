@@ -28,7 +28,9 @@ import {
   History,
   Plus,
   MessageSquare,
-  Home
+  Home,
+  ChevronRight,
+  Smartphone
 } from 'lucide-react';
 
 function DashboardLayoutContent({ children }) {
@@ -44,7 +46,6 @@ function DashboardLayoutContent({ children }) {
   const setHistoryList = useAppStore((state) => state.setHistoryList);
 
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  const [isMobileHistoryOpen, setIsMobileHistoryOpen] = useState(false);
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
@@ -54,17 +55,6 @@ function DashboardLayoutContent({ children }) {
   const isShortcutsOpenRef = useRef(isShortcutsOpen);
   const historyListRef = useRef(historyList);
   const activeHistoryIdRef = useRef(activeHistoryId);
-
-  // Mobile history drawer event trigger
-  useEffect(() => {
-    const handleOpenMobileHistory = () => {
-      setIsMobileHistoryOpen(true);
-    };
-    window.addEventListener('flash_rti_open_mobile_history', handleOpenMobileHistory);
-    return () => {
-      window.removeEventListener('flash_rti_open_mobile_history', handleOpenMobileHistory);
-    };
-  }, []);
 
   useEffect(() => {
     pathnameRef.current = pathname;
@@ -496,21 +486,20 @@ function DashboardLayoutContent({ children }) {
           </Link>
         </div>
 
-        <div className="flex items-center gap-1">
-          {/* Mobile History Trigger Button with Badge Count */}
+        <div className="flex items-center gap-1.5">
+          {/* Mobile Install App Button */}
           <button
             type="button"
-            onClick={() => setIsMobileHistoryOpen(true)}
-            className="p-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl relative transition-colors cursor-pointer active:scale-95 flex items-center justify-center"
-            title="Recent Query History"
-            aria-label="Recent Query History"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('rti_open_install_app'));
+              }
+            }}
+            className="px-2.5 py-1 bg-blue-600/15 hover:bg-blue-600/25 border border-blue-500/30 text-[#2563EB] rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 active:scale-95"
+            title="Install App"
           >
-            <History className="w-5 h-5 text-slate-700" />
-            {historyList.length > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-full bg-[#2563EB] text-white text-[9.5px] font-bold flex items-center justify-center ring-2 ring-white">
-                {historyList.length > 99 ? '99+' : historyList.length}
-              </span>
-            )}
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Install</span>
           </button>
 
           <Link
@@ -735,6 +724,24 @@ function DashboardLayoutContent({ children }) {
               </button>
             </div>
 
+            {/* Install Web App Trigger */}
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.dispatchEvent(new CustomEvent('rti_open_install_app'));
+                }
+              }}
+              className="w-full flex items-center justify-between px-2.5 py-1.5 text-[11px] text-blue-400 hover:text-white transition-colors cursor-pointer rounded-lg hover:bg-white/[0.06] bg-blue-600/10 border border-blue-500/20"
+              title="Install RTI Portal Web App"
+            >
+              <span className="font-semibold flex items-center gap-1.5">
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>Install App</span>
+              </span>
+              <span className="text-[9px] bg-blue-600 text-white px-1.5 py-0.2 rounded font-bold">PWA</span>
+            </button>
+
             {/* Minimal Clean '?' Shortcut Trigger */}
             <button
               type="button"
@@ -750,343 +757,168 @@ function DashboardLayoutContent({ children }) {
           </div>
         </aside>
 
-        {/* Mobile Navigation Drawer */}
+        {/* Mobile Navigation Drawer - 100% Full-Screen Immersive Layout */}
         <AnimatePresence>
           {isMobileNavOpen && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsMobileNavOpen(false)}
-                className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-50 lg:hidden"
-              />
-              <motion.div
-                initial={{ x: '-100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '-100%' }}
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                className="fixed inset-y-0 left-0 w-[280px] bg-[#040914] text-slate-300 z-50 p-6 flex flex-col justify-between shadow-2xl lg:hidden border-r border-slate-800"
-              >
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98, y: -12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, y: -12 }}
+              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed inset-0 w-full h-[100dvh] bg-[#030712]/98 backdrop-blur-2xl text-slate-200 z-50 p-6 flex flex-col justify-between shadow-2xl lg:hidden overflow-y-auto"
+            >
+              <div className="space-y-6">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-800 shrink-0">
+                  <div className="flex items-center gap-2.5">
+                    <Image
+                      src="/logo.png"
+                      alt="Logo"
+                      width={28}
+                      height={40}
+                      className="h-8 w-auto object-contain"
+                    />
+                    <div className="flex flex-col">
+                      <span className="font-bold text-white text-sm">RTI Information Portal</span>
+                      <span className="text-[10px] text-slate-400 font-medium">Government of India</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsMobileNavOpen(false)}
+                    className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 active:scale-95 cursor-pointer"
+                    aria-label="Close navigation"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+
+                {/* Primary Nav */}
+                <div className="space-y-2">
+                  {mainNavItems.map((item) => {
+                    const active = isNavActive(item.href, item.exact);
+                    const IconComponent = item.icon;
+
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        prefetch={true}
+                        onClick={() => setIsMobileNavOpen(false)}
+                        className={`flex items-center justify-between px-4 py-3.5 rounded-2xl text-base font-bold transition-all duration-150 active:scale-98 ${
+                          active
+                            ? 'bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white shadow-lg shadow-blue-600/30'
+                            : 'text-slate-300 hover:text-white hover:bg-white/10'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3.5">
+                          <IconComponent className="w-5 h-5 shrink-0" />
+                          <span>{item.name}</span>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-slate-500" />
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                <div className="h-px bg-slate-800/80" />
+
+                {/* Secondary Nav */}
+                <div className="space-y-1.5">
+                  {secondaryNavItems.map((item) => {
+                    const active = isNavActive(item.href);
+                    const IconComponent = item.icon;
+
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        prefetch={true}
+                        onClick={() => setIsMobileNavOpen(false)}
+                        className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150 ${
+                          active
+                            ? 'bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white shadow-lg shadow-blue-600/30'
+                            : 'text-slate-300 hover:text-white hover:bg-white/10'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3.5">
+                          <IconComponent className="w-5 h-5 shrink-0" />
+                          <span>{item.name}</span>
+                        </div>
+                        {item.badge && (
+                          <span className="text-xs bg-[#2563EB] text-white px-2 py-0.5 rounded-full font-bold">
+                            {item.badge}
+                          </span>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                {/* App Installation Action Button */}
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileNavOpen(false);
+                      if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new CustomEvent('rti_open_install_app'));
+                      }
+                    }}
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 hover:text-white text-sm font-bold transition-all cursor-pointer shadow-sm active:scale-98"
+                  >
                     <div className="flex items-center gap-2.5">
-                      <Image
-                        src="/logo.png"
-                        alt="Logo"
-                        width={28}
-                        height={40}
-                        className="h-8 w-auto object-contain"
-                      />
-                      <span className="font-bold text-white text-sm">Citizen Portal</span>
+                      <span className="text-base">📱</span>
+                      <span>Install RTI Portal App</span>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setIsMobileNavOpen(false)}
-                      className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/10"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  {/* Primary Nav */}
-                  <div className="space-y-1.5">
-                    {mainNavItems.map((item) => {
-                      const active = isNavActive(item.href, item.exact);
-                      const IconComponent = item.icon;
-                      const isFlashRTI = item.href === '/dashboard/flash-rti';
-
-                      return (
-                        <div key={item.name} className="space-y-1">
-                          <div
-                            className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150 ${
-                              active
-                                ? 'bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white shadow-lg shadow-blue-600/30'
-                                : 'text-slate-300 hover:text-white hover:bg-white/10'
-                            }`}
-                          >
-                            <Link
-                              href={item.href}
-                              prefetch={true}
-                              onClick={() => setIsMobileNavOpen(false)}
-                              className="flex items-center gap-3.5 flex-1 min-w-0"
-                            >
-                              <IconComponent className="w-5 h-5 shrink-0" />
-                              <span className="truncate">{item.name}</span>
-                            </Link>
-
-                            {isFlashRTI && (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  setIsHistoryExpanded(prev => !prev);
-                                }}
-                                className="p-1 rounded-md hover:bg-white/20 text-slate-400 hover:text-white"
-                                aria-label="Toggle Recent Queries"
-                              >
-                                {isHistoryExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                              </button>
-                            )}
-                          </div>
-
-                          {/* Recent Queries inside Mobile Nav Drawer */}
-                          {isFlashRTI && isHistoryExpanded && (
-                            <div className="pl-4 pr-1 py-1 space-y-1">
-                              <div className="flex items-center justify-between px-2 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                                <span className="flex items-center gap-1.5 text-slate-400">
-                                  <History className="w-3 h-3 text-blue-400" />
-                                  <span>Recent Queries</span>
-                                </span>
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    setIsMobileNavOpen(false);
-                                    handleNewSearch(e);
-                                  }}
-                                  className="text-[10px] text-blue-300 hover:text-white bg-blue-500/25 hover:bg-blue-600 px-2 py-0.5 rounded font-bold transition-all cursor-pointer flex items-center gap-0.5"
-                                >
-                                  <Plus className="w-2.5 h-2.5" />
-                                  <span>NEW</span>
-                                </button>
-                              </div>
-
-                              <div className="space-y-1 max-h-48 overflow-y-auto custom-sidebar-scroll pr-1">
-                                {historyList.length > 0 ? (
-                                  historyList.slice(0, 10).map((h) => {
-                                    const isCurrentHistory = String(activeHistoryId) === String(h.id);
-                                    return (
-                                      <Link
-                                        key={h.id}
-                                        href={`/dashboard/flash-rti?historyId=${h.id}`}
-                                        onClick={() => setIsMobileNavOpen(false)}
-                                        className={`flex items-start gap-2 px-2.5 py-1.5 rounded-lg text-xs transition-colors block ${
-                                          isCurrentHistory
-                                            ? 'bg-blue-600/30 text-white font-medium border border-blue-400/40'
-                                            : 'text-slate-400 hover:text-slate-200 hover:bg-white/10'
-                                        }`}
-                                      >
-                                        <MessageSquare className="w-3 h-3 shrink-0 mt-0.5 text-slate-500" />
-                                        <span className="truncate flex-1 text-[11px]">
-                                          {h.query}
-                                        </span>
-                                      </Link>
-                                    );
-                                  })
-                                ) : (
-                                  <p className="text-[11px] text-slate-500 px-2 py-1 italic">
-                                    No recent queries yet
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div className="h-px bg-slate-800/80" />
-
-                  {/* Secondary Nav */}
-                  <div className="space-y-1.5">
-                    {secondaryNavItems.map((item) => {
-                      const active = isNavActive(item.href);
-                      const IconComponent = item.icon;
-
-                      return (
-                        <Link
-                          key={item.name}
-                          href={item.href}
-                          prefetch={true}
-                          onClick={() => setIsMobileNavOpen(false)}
-                          className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-150 ${
-                            active
-                              ? 'bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white shadow-lg shadow-blue-600/30'
-                              : 'text-slate-300 hover:text-white hover:bg-white/10'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3.5">
-                            <IconComponent className="w-5 h-5 shrink-0" />
-                            <span>{item.name}</span>
-                          </div>
-                          {item.badge && (
-                            <span className="text-xs bg-[#2563EB] text-white px-2 py-0.5 rounded-full font-bold">
-                              {item.badge}
-                            </span>
-                          )}
-                        </Link>
-                      );
-                    })}
-                  </div>
+                    <span className="text-[10px] uppercase tracking-wider bg-blue-500 text-white px-2 py-0.5 rounded-md font-bold">
+                      FREE
+                    </span>
+                  </button>
                 </div>
+              </div>
 
-                <div className="pt-4 border-t border-slate-800/80 space-y-3">
-                  <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-3 flex items-center justify-between gap-3">
-                    <Link 
-                      href="/dashboard/profile" 
-                      onClick={() => setIsMobileNavOpen(false)}
-                      className="flex items-center gap-3 min-w-0 flex-1"
-                    >
-                      <ModernAvatar
-                        src={user?.avatar}
-                        name={userName}
-                        size="sm"
-                        showBadge={true}
-                        status="verified"
-                        isInteractive={false}
-                      />
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-sm font-bold text-white truncate leading-tight">
-                          {userName}
-                        </span>
-                        <span className="text-[10.5px] text-emerald-400 font-semibold mt-0.5 flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                          <span className="truncate">DigiLocker Verified</span>
-                        </span>
-                      </div>
-                    </Link>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsMobileNavOpen(false);
-                        handleLogout();
-                      }}
-                      className="p-2 text-slate-400 hover:text-red-400 hover:bg-white/10 rounded-xl transition-colors cursor-pointer shrink-0"
-                      title="Logout"
-                      aria-label="Logout"
-                    >
-                      <LogOut className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-
-        {/* Mobile Dedicated History Slide-Over Drawer */}
-        <AnimatePresence>
-          {isMobileHistoryOpen && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsMobileHistoryOpen(false)}
-                className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-50 lg:hidden"
-              />
-              <motion.div
-                initial={{ x: '100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '100%' }}
-                transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-                className="fixed inset-y-0 right-0 w-[88vw] max-w-[340px] bg-[#040914] text-slate-200 z-50 p-5 flex flex-col justify-between shadow-2xl lg:hidden border-l border-slate-800"
-              >
-                <div className="flex flex-col h-full min-h-0">
-                  {/* History Drawer Header */}
-                  <div className="flex items-center justify-between pb-3.5 border-b border-slate-800 shrink-0">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
-                        <History className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-white tracking-tight">Recent Queries</h3>
-                        <p className="text-[10.5px] text-slate-400">
-                          {historyList.length} saved {historyList.length === 1 ? 'query' : 'queries'}
-                        </p>
-                      </div>
+              {/* Bottom Citizen Profile Card */}
+              <div className="pt-4 border-t border-slate-800/80 space-y-3 shrink-0">
+                <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between gap-3">
+                  <Link 
+                    href="/dashboard/profile" 
+                    onClick={() => setIsMobileNavOpen(false)}
+                    className="flex items-center gap-3 min-w-0 flex-1"
+                  >
+                    <ModernAvatar
+                      src={user?.avatar}
+                      name={userName}
+                      size="sm"
+                      showBadge={true}
+                      status="verified"
+                      isInteractive={false}
+                    />
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-sm font-bold text-white truncate leading-tight">
+                        {userName}
+                      </span>
+                      <span className="text-[10.5px] text-emerald-400 font-semibold mt-0.5 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        <span className="truncate">DigiLocker Verified</span>
+                      </span>
                     </div>
+                  </Link>
 
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          setIsMobileHistoryOpen(false);
-                          handleNewSearch(e);
-                        }}
-                        className="text-[11px] text-white bg-blue-600 hover:bg-blue-500 px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 shadow-sm active:scale-95"
-                        title="Start New Search"
-                      >
-                        <Plus className="w-3 h-3" />
-                        <span>NEW</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setIsMobileHistoryOpen(false)}
-                        className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 active:scale-95"
-                        aria-label="Close history drawer"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* History List */}
-                  <div className="flex-1 overflow-y-auto py-3 space-y-2 min-h-0 custom-sidebar-scroll pr-0.5">
-                    {historyList.length > 0 ? (
-                      historyList.map((h) => {
-                        const isCurrentHistory = String(activeHistoryId) === String(h.id);
-
-                        return (
-                          <Link
-                            key={h.id}
-                            href={`/dashboard/flash-rti?historyId=${h.id}`}
-                            onClick={() => setIsMobileHistoryOpen(false)}
-                            className={`flex items-start gap-2.5 p-3 rounded-xl text-xs transition-all active:scale-[0.98] ${
-                              isCurrentHistory
-                                ? 'bg-blue-600/25 text-white font-medium border border-blue-400/50 shadow-sm'
-                                : 'text-slate-300 hover:text-white hover:bg-white/10 border border-slate-800/60 bg-slate-900/50'
-                            }`}
-                          >
-                            <MessageSquare className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${
-                              isCurrentHistory ? 'text-blue-300' : 'text-slate-400'
-                            }`} />
-                            <div className="flex flex-col min-w-0 flex-1">
-                              <span className="text-[12px] font-medium leading-snug line-clamp-2">
-                                {h.query}
-                              </span>
-                              {h.created_at && (
-                                <span className="text-[10px] text-slate-500 mt-1">
-                                  {new Date(h.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                                </span>
-                              )}
-                            </div>
-                          </Link>
-                        );
-                      })
-                    ) : (
-                      <div className="py-10 text-center space-y-2 px-3">
-                        <div className="w-11 h-11 rounded-full bg-slate-800/60 border border-slate-700/60 flex items-center justify-center mx-auto text-slate-500">
-                          <History className="w-5 h-5" />
-                        </div>
-                        <p className="text-xs font-semibold text-slate-300">No recent queries yet</p>
-                        <p className="text-[11px] text-slate-500 leading-relaxed">
-                          Your searched queries will be automatically saved here for 1-tap instant reload.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Bottom Action */}
-                  <div className="pt-3 border-t border-slate-800 shrink-0">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        setIsMobileHistoryOpen(false);
-                        handleNewSearch(e);
-                      }}
-                      className="w-full py-2.5 px-3 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
-                    >
-                      <Plus className="w-4 h-4" />
-                      <span>Start New RTI Query</span>
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileNavOpen(false);
+                      handleLogout();
+                    }}
+                    className="p-2 text-slate-400 hover:text-red-400 hover:bg-white/10 rounded-xl transition-colors cursor-pointer shrink-0"
+                    title="Logout"
+                    aria-label="Logout"
+                  >
+                    <LogOut className="w-5 h-5" />
+                  </button>
                 </div>
-              </motion.div>
-            </>
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
 

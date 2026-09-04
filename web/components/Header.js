@@ -130,7 +130,7 @@ export default function Header() {
             <h1 className="text-xs min-[360px]:text-[13px] sm:text-base md:text-lg font-bold text-[#0B1C3F] tracking-normal sm:tracking-tight leading-tight whitespace-nowrap sm:whitespace-normal">
               {t.header.title}
             </h1>
-            <p className="text-[9px] min-[360px]:text-[10px] sm:text-xs text-gray-500 font-medium tracking-normal whitespace-nowrap sm:whitespace-normal leading-tight mt-0.5">
+            <p className="hidden sm:block text-[9px] min-[360px]:text-[10px] sm:text-xs text-gray-500 font-medium tracking-normal whitespace-nowrap sm:whitespace-normal leading-tight mt-0.5">
               {t.header.subtitle}
             </p>
           </div>
@@ -317,54 +317,72 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Drawer Navigation Menu with Framer Motion */}
+      {/* Mobile 100% Full-Screen Immersive Drawer Navigation Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:hidden overflow-hidden border-t border-gray-200/80 bg-white"
+            initial={{ opacity: 0, scale: 0.97, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.97, y: -10 }}
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:hidden fixed inset-0 w-full h-[100dvh] bg-[#030712]/98 backdrop-blur-2xl z-50 p-6 flex flex-col justify-between overflow-y-auto text-slate-200"
           >
-            <div className="min-h-0 bg-white px-4 py-4 shadow-lg">
-              <nav className="flex flex-col gap-1 text-sm">
+            <div className="space-y-6">
+              {/* Header inside full-screen menu */}
+              <div className="flex items-center justify-between pb-4 border-b border-slate-800 shrink-0">
+                <div className="flex items-center gap-3">
+                  <Image 
+                    src="/logo.png" 
+                    alt="Logo" 
+                    width={32} 
+                    height={46} 
+                    className="h-8 w-auto object-contain" 
+                  />
+                  <div className="flex flex-col">
+                    <span className="font-bold text-white text-sm">RTI Information Portal</span>
+                    <span className="text-[10px] text-slate-400 font-medium">Government of India</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-white/10 active:scale-95"
+                  aria-label="Close menu"
+                >
+                  <AnimatedMenuIcon isOpen={true} className="w-6 h-6 text-white" />
+                </button>
+              </div>
+
+              {/* Navigation Items */}
+              <nav className="flex flex-col gap-2">
                 {navItems.map((item, index) => {
                   const active = isActive(item.href);
 
                   return (
                     <motion.div
                       key={item.key}
-                      initial={{ opacity: 0, x: -6 }}
+                      initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.03, duration: 0.18 }}
+                      transition={{ delay: index * 0.04, duration: 0.2 }}
                     >
                       <Link 
                         href={item.href} 
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className={`group relative flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition-all duration-150 ${
+                        className={`group relative flex items-center justify-between px-4 py-3.5 rounded-2xl text-base transition-all duration-150 ${
                           active 
-                            ? 'bg-slate-100/90 text-[#0B1C3F] font-semibold border border-slate-200/80 shadow-2xs' 
-                            : 'text-slate-600 hover:text-[#0B1C3F] hover:bg-slate-50 border border-transparent font-medium'
+                            ? 'bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white font-bold shadow-lg shadow-blue-600/30' 
+                            : 'text-slate-300 hover:text-white hover:bg-white/10 font-semibold'
                         }`}
                       >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <span 
-                            className={`w-1 h-4.5 rounded-full transition-colors shrink-0 ${
-                              active ? 'bg-[#2563EB]' : 'bg-transparent'
-                            }`}
-                            aria-hidden="true"
-                          />
-                          <span className="truncate">
-                            {item.label}
-                          </span>
-                        </div>
+                        <span className="truncate">
+                          {item.label}
+                        </span>
                         
                         <ChevronRightIcon 
-                          className={`w-3.5 h-3.5 transition-all shrink-0 ${
+                          className={`w-4 h-4 transition-all shrink-0 ${
                             active 
-                              ? 'text-[#2563EB]' 
-                              : 'text-slate-300 group-hover:text-slate-500 group-hover:translate-x-0.5'
+                              ? 'text-white' 
+                              : 'text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5'
                           }`} 
                         />
                       </Link>
@@ -373,35 +391,69 @@ export default function Header() {
                 })}
               </nav>
 
-              <div className="mt-4 pt-3 border-t border-gray-100 flex flex-col gap-2">
-                {user ? (
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 bg-blue-50 text-[#2563EB] border border-blue-200 px-3.5 py-2 rounded-lg text-xs font-bold">
-                      <UserIcon className="w-4 h-4 text-[#2563EB]" />
-                      <span>{user.name || user.username}</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        logoutUser();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="w-full flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer"
-                    >
-                      <span>{t.login?.logoutBtn || (language === 'hi' ? 'लॉग आउट' : 'Sign Out')}</span>
-                    </button>
+              {/* App Install Action Button */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    if (typeof window !== 'undefined') {
+                      window.dispatchEvent(new CustomEvent('rti_open_install_app'));
+                    }
+                  }}
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 hover:text-white text-sm font-bold transition-all cursor-pointer shadow-sm active:scale-98"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-base">📱</span>
+                    <span>Install RTI Portal App</span>
                   </div>
-                ) : (
-                  <Link 
-                    href="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center gap-2 bg-[#2563EB] hover:bg-[#1d4ed8] active:bg-[#1e40af] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 shadow-2xs hover:shadow-md cursor-pointer"
-                  >
-                    <UserIcon className="w-4 h-4 text-white" />
-                    <span>{t.header.nav.login}</span>
-                  </Link>
-                )}
+                  <span className="text-[10px] uppercase tracking-wider bg-blue-500 text-white px-2 py-0.5 rounded-md font-bold">
+                    FREE
+                  </span>
+                </button>
               </div>
+            </div>
+
+            {/* Bottom User / Login Controls */}
+            <div className="pt-6 border-t border-slate-800 flex flex-col gap-3 shrink-0">
+              {user ? (
+                <div className="flex flex-col gap-2.5">
+                  <div className="flex items-center gap-3 bg-slate-900/90 border border-slate-800 p-3 rounded-2xl">
+                    <ModernAvatar
+                      src={user.avatar}
+                      name={user.name || user.username}
+                      size="sm"
+                      showBadge={true}
+                    />
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className="text-sm font-bold text-white truncate">{user.name || user.username}</span>
+                      <span className="text-[10.5px] text-emerald-400 font-semibold flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        <span>DigiLocker Verified</span>
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      logoutUser();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full py-2.5 bg-white/10 hover:bg-white/15 active:scale-98 text-slate-300 hover:text-white rounded-xl text-xs font-semibold transition-all cursor-pointer text-center"
+                  >
+                    <span>{t.login?.logoutBtn || (language === 'hi' ? 'लॉग आउट' : 'Sign Out')}</span>
+                  </button>
+                </div>
+              ) : (
+                <Link 
+                  href="/login" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center gap-2 bg-[#2563EB] hover:bg-[#1D4ED8] active:scale-98 text-white px-4 py-3.5 rounded-2xl text-sm font-bold shadow-lg shadow-blue-600/30 transition-all cursor-pointer"
+                >
+                  <UserIcon className="w-4 h-4 text-white" />
+                  <span>{t.header.nav.login}</span>
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
