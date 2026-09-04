@@ -44,7 +44,7 @@ function DashboardLayoutContent({ children }) {
   const setHistoryList = useAppStore((state) => state.setHistoryList);
 
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
   // Stable references for high-performance single-listener keyboard engine
@@ -81,19 +81,36 @@ function DashboardLayoutContent({ children }) {
       const res = await fetch('/api/history');
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           setHistoryList(data);
+          if (typeof window !== "undefined") {
+            try {
+              localStorage.setItem('rti_flash_history_cached', JSON.stringify(data));
+            } catch (e) {}
+          }
+          return;
         }
       }
     } catch (err) {
       console.warn("Failed to fetch sidebar history:", err);
     }
+
+    // Client-side cache fallback
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem('rti_flash_history_cached');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setHistoryList(parsed);
+          }
+        }
+      } catch (e) {}
+    }
   }, [setHistoryList]);
 
   useEffect(() => {
-    if (historyList.length === 0) {
-      fetchHistory();
-    }
+    fetchHistory();
 
     const handleHistoryUpdate = () => {
       fetchHistory();
@@ -103,7 +120,7 @@ function DashboardLayoutContent({ children }) {
     return () => {
       window.removeEventListener('flash_rti_history_updated', handleHistoryUpdate);
     };
-  }, [fetchHistory, historyList.length]);
+  }, [fetchHistory]);
 
   const userName = user?.name || 'Shivam Gupta';
   const userInitial = userName.charAt(0).toUpperCase();
@@ -479,7 +496,7 @@ function DashboardLayoutContent({ children }) {
                             </div>
 
                             {/* History Items List */}
-                            <div className="space-y-0.5 max-h-40 overflow-y-auto pr-0.5 custom-sidebar-scroll">
+                            <div className="space-y-0.5 max-h-64 overflow-y-auto pr-0.5 custom-sidebar-scroll">
                               {historyList.length > 0 ? (
                                 historyList.map((h) => {
                                   const isCurrentHistory = String(activeHistoryId) === String(h.id);

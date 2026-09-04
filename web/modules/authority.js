@@ -1,4 +1,4 @@
-import { askLLM } from "@/services/llm";
+import { askLLM } from "../services/llm.js";
 
 export async function identify_authority(query) {
     const authorities = `

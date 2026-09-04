@@ -127,6 +127,186 @@ const INITIAL_HISTORY = [
                 ]
             }
         }
+    },
+    {
+        id: "hist-rail-1",
+        query: "What is the capital outlay and Vande Bharat fleet of Indian Railways in 2025?",
+        created_at: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+        data: {
+            status: "success",
+            result: {
+                is_relevant: true,
+                is_sufficient: true,
+                missing_points: null,
+                report_data: [
+                    {
+                        type: "plain",
+                        content: "Indian Railways operated 136 Vande Bharat train sets with 99.2% electrified route mileage and ₹2,52,000 Crores in capital outlay in 2025."
+                    },
+                    {
+                        type: "table",
+                        title: "Indian Railways Zonal Outlays & Fleet Operations (2025)",
+                        content: [
+                            ["Railway Zone", "Headquarters", "Capital Outlay (₹ Cr)", "Electrified Route (km)", "Vande Bharat Sets", "Stations Redeveloped"],
+                            ["National Consolidated", "New Delhi", "252,000", "64,500", "136", "508"],
+                            ["Northern Railway (NR)", "New Delhi", "29,400", "7,120", "24", "68"],
+                            ["Western Railway (WR)", "Mumbai", "26,800", "6,450", "18", "52"],
+                            ["Central Railway (CR)", "Mumbai", "25,100", "4,180", "16", "48"]
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    {
+        id: "hist-kisan-1",
+        query: "How much DBT funds disbursed under PM-KISAN scheme in 2025?",
+        created_at: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+        data: {
+            status: "success",
+            result: {
+                is_relevant: true,
+                is_sufficient: true,
+                missing_points: null,
+                report_data: [
+                    {
+                        type: "plain",
+                        content: "Under PM-KISAN 18th & 19th Installments, ₹18,800 Crores was directly transferred to 940 Lakh beneficiary farmers across India in 2025."
+                    },
+                    {
+                        type: "table",
+                        title: "PM-KISAN DBT Disbursals & Beneficiaries (2025)",
+                        content: [
+                            ["State", "Beneficiary Farmers (Lakh)", "DBT Funds (₹ Cr)", "Crop Insurance Claims (₹ Cr)", "Paddy Procurement (LMT)"],
+                            ["National Consolidated", "940.00", "18,800.00", "18,500.00", "520.00"],
+                            ["Uttar Pradesh", "264.50", "5,290.00", "1,840.50", "54.20"],
+                            ["Maharashtra", "118.20", "2,364.00", "3,210.00", "18.50"],
+                            ["Madhya Pradesh", "92.40", "1,848.00", "2,450.00", "46.80"]
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    {
+        id: "hist-solar-1",
+        query: "What is the installed solar and wind energy capacity in 2025?",
+        created_at: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+        data: {
+            status: "success",
+            result: {
+                is_relevant: true,
+                is_sufficient: true,
+                missing_points: null,
+                report_data: [
+                    {
+                        type: "plain",
+                        content: "Total national renewable energy capacity surpassed 1,65,000 MW in 2025, driven by Rajasthan (28,100 MW) and Gujarat (28,600 MW) alongside 9.5 Lakh PM Surya Ghar sanctions."
+                    },
+                    {
+                        type: "table",
+                        title: "Renewable Energy & PM Surya Ghar Installed Capacity (2025)",
+                        content: [
+                            ["State", "Solar Capacity (MW)", "Wind Capacity (MW)", "Total Renewable (MW)", "Surya Ghar Sanctions", "Subsidies (₹ Cr)"],
+                            ["National Total", "94,000", "48,500", "165,000", "950,000", "6,800.00"],
+                            ["Gujarat", "16,800", "11,400", "28,600", "198,000", "1,420.00"],
+                            ["Rajasthan", "22,400", "5,180", "28,100", "84,500", "590.50"],
+                            ["Tamil Nadu", "8,900", "10,800", "20,100", "92,000", "640.00"]
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    {
+        id: "hist-upi-1",
+        query: "What was the total volume and value of UPI transactions in 2025?",
+        created_at: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
+        data: {
+            status: "success",
+            result: {
+                is_relevant: true,
+                is_sufficient: true,
+                missing_points: null,
+                report_data: [
+                    {
+                        type: "plain",
+                        content: "Unified Payments Interface (UPI) processed 18,200 Crore transactions worth ₹255 Lakh Crores in 2025 with DigiLocker reaching 28.5 Crore registered citizens."
+                    },
+                    {
+                        type: "table",
+                        title: "Digital India & UPI Monthly Transaction Volumes (2025)",
+                        content: [
+                            ["Period", "UPI Volume (Cr Txns)", "UPI Value (₹ Lakh Cr)", "Merchant Share (%)", "DigiLocker Users (Cr)"],
+                            ["Annual Total 2025", "18,200.00", "255.00", "60.2%", "28.50"],
+                            ["December 2025", "1,680.00", "23.40", "61.2%", "28.50"],
+                            ["November 2025", "1,620.00", "22.80", "60.8%", "27.90"],
+                            ["October 2025", "1,658.00", "23.20", "62.0%", "27.40"]
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    {
+        id: "hist-mgnrega-1",
+        query: "How many person-days generated and average daily wages under MGNREGA in 2025?",
+        created_at: new Date(Date.now() - 1000 * 60 * 300).toISOString(),
+        data: {
+            status: "success",
+            result: {
+                is_relevant: true,
+                is_sufficient: true,
+                missing_points: null,
+                report_data: [
+                    {
+                        type: "plain",
+                        content: "MGNREGA generated 285 Crore person-days with ₹86,000 Crores in statutory wage disbursals and 57.8% women participation in 2025."
+                    },
+                    {
+                        type: "table",
+                        title: "MGNREGA Rural Employment & Wage Statistics (2025)",
+                        content: [
+                            ["State", "Active Job Cards (Lakh)", "Person Days (Cr)", "Wages Paid (₹ Cr)", "Daily Wage (₹)", "Women Share (%)"],
+                            ["National Consolidated", "1,420.00", "285.00", "86,000.00", "₹289", "57.8%"],
+                            ["Tamil Nadu", "94.20", "32.80", "10,450.00", "₹319", "84.5%"],
+                            ["Rajasthan", "112.50", "28.40", "7,420.00", "₹261", "67.2%"],
+                            ["Uttar Pradesh", "184.00", "27.60", "6,980.00", "₹253", "39.8%"]
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    {
+        id: "hist-urban-1",
+        query: "How many houses completed under PMAY Urban and Smart Cities funds in 2025?",
+        created_at: new Date(Date.now() - 1000 * 60 * 360).toISOString(),
+        data: {
+            status: "success",
+            result: {
+                is_relevant: true,
+                is_sufficient: true,
+                missing_points: null,
+                report_data: [
+                    {
+                        type: "plain",
+                        content: "Under Pradhan Mantri Awas Yojana (Urban), 96.5 Lakh houses were completed with ₹1,54,000 Crores released in central assistance and 980 km of operational metro rail."
+                    },
+                    {
+                        type: "table",
+                        title: "PMAY Urban & Smart Cities Infrastructure Progress (2025)",
+                        content: [
+                            ["State / Sector", "Houses Completed", "Central Assistance (₹ Cr)", "Smart Projects Done", "Metro Rail (km)"],
+                            ["National Consolidated", "9,650,000", "154,000.00", "7,400", "980.0"],
+                            ["Uttar Pradesh", "1,490,000", "22,100.00", "540", "118.0"],
+                            ["Maharashtra", "980,000", "16,900.00", "510", "164.0"],
+                            ["Gujarat", "920,000", "14,800.00", "480", "96.0"]
+                        ]
+                    }
+                ]
+            }
+        }
     }
 ];
 

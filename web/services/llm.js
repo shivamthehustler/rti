@@ -1,4 +1,4 @@
-import { askGemini } from "./gemini";
+import { askGemini } from "./gemini.js";
 
 export function askLLM({
     systemPrompt,
