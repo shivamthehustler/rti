@@ -519,7 +519,7 @@ function DashboardLayoutContent({ children }) {
                                   return (
                                     <Link
                                       key={h.id}
-                                      href={`/dashboard/flash-rti?historyId=${h.id}`}
+                                      href={`/dashboard/flash-rti?query=${encodeURIComponent(h.query)}`}
                                       className={`flex items-start gap-2 px-2.5 py-1.5 rounded-lg text-xs transition-colors group/item block ${
                                         isCurrentHistory
                                           ? 'bg-blue-600/30 text-white font-medium border border-blue-400/40'

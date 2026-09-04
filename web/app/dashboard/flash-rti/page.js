@@ -942,17 +942,9 @@ function FlashRTIContent() {
           const res = await fetch(`/api/history?id=${historyIdParam}`);
           if (res.ok) {
             const historyItem = await res.json();
-            if (historyItem) {
-              setSearchQuery(historyItem.query || '');
-              if (historyItem.data?.result) {
-                setActiveResult(historyItem.data.result);
-                setPipelineState('completed');
-                setSteps(INITIAL_STEPS.map(s => ({
-                  ...s,
-                  status: 'completed',
-                  subtext: 'Verified from archive'
-                })));
-              }
+            if (historyItem && historyItem.query) {
+              setSearchQuery(historyItem.query);
+              startPipeline(historyItem.query);
             }
           }
         } catch (err) {
