@@ -528,26 +528,9 @@ function FlashRTIContent() {
   const [isCopied, setIsCopied] = useState(false);
   const [steps, setSteps] = useState(INITIAL_STEPS);
 
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
-
   const abortControllerRef = useRef(null);
   const searchInputRef = useRef(null);
   const processedParamRef = useRef(null);
-
-  useEffect(() => {
-    let interval;
-    if (pipelineState === 'running') {
-      const startTime = Date.now();
-      setElapsedSeconds(0);
-      interval = setInterval(() => {
-        const elapsed = (Date.now() - startTime) / 1000;
-        setElapsedSeconds(Number(elapsed.toFixed(1)));
-      }, 100);
-    } else {
-      setElapsedSeconds(0);
-    }
-    return () => clearInterval(interval);
-  }, [pipelineState]);
 
   const handleReset = useCallback(() => {
     if (abortControllerRef.current) {
@@ -559,7 +542,6 @@ function FlashRTIContent() {
     setActiveResult(null);
     setErrorMessage(null);
     setSteps(INITIAL_STEPS);
-    setElapsedSeconds(0);
     if (typeof window !== 'undefined') {
       window.sessionStorage.removeItem('flash_rti_force_new');
       try {
@@ -1231,52 +1213,6 @@ function FlashRTIContent() {
             </button>
           </div>
         </div>
-
-        {/* Live Autonomous Investigation Progress HUD Banner */}
-        <AnimatePresence>
-          {pipelineState === 'running' && (
-            <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.98 }}
-              className="w-full max-w-2xl sm:max-w-3xl mx-auto bg-gradient-to-r from-[#0B1C3F] via-blue-950 to-indigo-950 text-white rounded-2xl p-4 sm:p-4.5 shadow-xl border border-blue-400/30 text-left space-y-3"
-            >
-              <div className="flex items-center justify-between gap-3 flex-wrap">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-blue-500/25 border border-blue-400/40 flex items-center justify-center shrink-0">
-                    <Loader2 className="w-4.5 h-4.5 text-blue-400 animate-spin" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs sm:text-sm font-bold text-white tracking-tight flex items-center gap-2">
-                      <span>Autonomous AI Investigation in Progress</span>
-                      <span className="text-[10px] bg-blue-500/30 text-blue-300 font-mono px-2 py-0.5 rounded-full border border-blue-400/30">
-                        Live Deep Scan
-                      </span>
-                    </h4>
-                    <p className="text-[11px] sm:text-xs text-blue-200/80">
-                      Cross-referencing 58 Central Ministries, Gazette archives & Open Government Data APIs
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 font-mono text-xs text-blue-200 bg-black/40 px-3 py-1.5 rounded-xl border border-white/10 shrink-0">
-                  <Clock className="w-3.5 h-3.5 text-blue-400" />
-                  <span className="font-bold text-white">{elapsedSeconds.toFixed(1)}s</span>
-                  <span className="text-slate-400 font-normal">/ ~25.0s</span>
-                </div>
-              </div>
-
-              {/* Progress Bar with Animated Smooth Transition */}
-              <div className="w-full bg-black/40 rounded-full h-2 overflow-hidden border border-white/10 p-0.5">
-                <div
-                  className="h-full bg-gradient-to-r from-blue-500 via-indigo-400 to-cyan-400 rounded-full transition-all duration-200 ease-linear"
-                  style={{
-                    width: `${Math.min(98, Math.max(3, (elapsedSeconds / 25) * 100))}%`
-                  }}
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* 5 Real-Time Pipeline Execution Cards in Centered Single Column Stack */}
         <div className="flex flex-col gap-2.5 sm:gap-3 w-full max-w-2xl sm:max-w-3xl mx-auto text-left pt-1">
