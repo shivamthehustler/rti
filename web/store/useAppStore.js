@@ -125,5 +125,33 @@ export const useAppStore = create((set, get) => ({
     }
   },
 
+  userFiledRequests: [],
+  
+  loadFiledRequests: () => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('rti_portal_filed_requests');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            set({ userFiledRequests: parsed });
+          }
+        }
+      } catch (e) {}
+    }
+  },
+
+  addFiledRequest: (newReq) => {
+    const current = get().userFiledRequests;
+    const updated = [newReq, ...current];
+    set({ userFiledRequests: updated });
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('rti_portal_filed_requests', JSON.stringify(updated));
+      } catch (e) {}
+    }
+  },
+
   getTranslations: () => dictionary[get().language] || dictionary.en
 }));
+
